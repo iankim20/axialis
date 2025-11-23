@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI TORIC - Dashboard</title>
+    <link rel="stylesheet" href="{% static 'users/css/dashboard.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <img src="{% static 'logo_blue.png' %}" alt="AI TORIC">
+            <a class="logo-text" href="{% url 'iolm:landing' %}">AI TORIC</a>
+        </div>
+        <nav class="nav">
+            <a class="nav-btn" href="">자유 게시판</a>
+            <a class="nav-btn" href="">토릭IOL 계산하기</a>
+            <a class="nav-btn" href="{% url 'users:dashboard' %}">내 대시보드</a>
+            <a class="nav-btn nav-logout" href="{% url 'users:logout' %}">로그아웃</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section>
+            <h2>내 정보</h2>
+            <ul>
+                <li><strong>이름:</strong> {{ user.realname }}</li>
+                <li><strong>Kakao ID:</strong> {{ user.kakao_id }}</li>
+            </ul>
+        </section>
+        <section>
+            <h2>Features</h2>
+            <p>Use the dashboard to upload IOLMaster images, calculate results, and track your progress.</p>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 AI TORIC. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

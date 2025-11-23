@@ -1,0 +1,146 @@
+/* General Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(to bottom, white, #E6F3FF);
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 40px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow to the header */
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    height: 40px;
+}
+
+.logo-text {
+    color: #0088FF;
+    font-size: 24px;
+    font-weight: bold;
+    margin-left: 10px;
+    text-decoration: none;
+}
+
+/* Main Content */
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 80px); /* Adjust height minus navbar and footer */
+    padding: 20px;
+}
+
+.login-box {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Stronger shadow for depth */
+    padding: 30px ;
+    padding-top: 15px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -150px;
+}
+
+.login-box h1 {
+    font-size: 26px;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 6px;
+}
+
+.login-box p {
+    font-size: 18px;
+    color: #666666;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+/* Kakao Login Button */
+.kakao-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FFEB00; /* Kakao Yellow */
+    color: black;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 16px;
+    cursor: pointer;
+    width: 60%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adds a button shadow */
+    transition: background 0.3s ease;
+    text-decoration: none; /* Ensures no underline if button is an <a> tag */
+}
+
+.kakao-login img {
+    height: 20px;
+    margin-right: 8px;
+}
+
+.kakao-login:hover {
+    background: #FFD600; /* Darker Kakao Yellow */
+}
+
+/* Footer */
+.footer {
+    background: #f3f3f3;
+    padding: 20px;
+    font-size: 14px;
+    color: gray;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header {
+        padding: 16px 20px;
+    }
+
+    .logo img {
+        height: 35px;
+    }
+
+    .logo-text {
+        font-size: 20px;
+    }
+
+    .login-box {
+        padding: 30px 20px;
+    }
+
+    .login-box h1 {
+        font-size: 22px;
+    }
+
+    .login-box p {
+        font-size: 14px;
+    }
+
+    .kakao-login {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    .kakao-login img {
+        height: 18px;
+    }
+}

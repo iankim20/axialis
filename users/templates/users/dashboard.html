@@ -1,0 +1,429 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI TORIC - Dashboard</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <!-- External CSS -->
+  <link rel="stylesheet" href="{% static 'users/css/dashboard.css' %}">
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+</head>
+<body>
+  <!-- Nav Bar (Preserved) -->
+  <header class="header">
+    <div class="logo">
+      <img src="{% static 'logo_blue.png' %}" alt="AI TORIC">
+      <a class="logo-text" href="{% url 'iolm:landing' %}">AI TORIC</a>
+    </div>
+    <nav class="nav">
+      {% comment %} <a class="nav-btn" href="{% url 'iolm:extract' %}">IOLM 추출</a>
+      <a class="nav-btn" href="{% url 'iolm:calculate' %}">IOL 계산하기</a>
+      <a class="nav-btn" href="{% url 'board:board_list' %}">자유 게시판</a> {% endcomment %}
+      <a class="nav-btn" href="{% url 'iolm:input' %}">IOLM 추출</a>
+      {% comment %} <a class="nav-btn" href="{% url 'iolm:input_calculate_all' %}">IOL 계산하기</a> {% endcomment %}
+      <a class="nav-btn" href="">자유 게시판</a>
+      <a class="nav-btn {% if request.resolver_match.view_name == 'users:dashboard' %}active{% endif %}" href="{% url 'users:dashboard' %}">마이페이지</a>
+      <a class="nav-btn nav-logout" href="{% url 'users:logout' %}">로그아웃</a>
+    </nav>
+  </header>
+
+  <!-- Main Dashboard Container -->
+  <main class="dashboard-container">
+    <div class="dashboard-grid">
+      <!-- Left Column -->
+        <div class="left-column">
+            <!-- Box #1: MY 계정 정보 -->
+            <div class="account-info">
+                <div class="h2_div">
+                    <h2><span class="span_h2">MY</span> 계정 정보</h2>
+                </div>
+                <div class="field-group">
+                    <div class="label-row">
+                        <label class="account_label">닉네임</label>
+                        <button class="icon-button" id="edit-nickname-btn">
+                            <svg class='icon' id="pencil" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil h-4 w-4 text-blue-600"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path><path d="m15 5 4 4"></path></svg>
+                        </button>
+                    </div>
+                    <div class="account_content" id="nickname" data-last-change="{{ user.nickname_change_date|date:'c' }}">
+                        {{ user.nickname }}
+                    </div>
+                    <p class="description" id="date_description">닉네임(필명)은 100일마다 변경 가능합니다 (마지막 변경일: <span id="nickname-change-date" data-date="{{ user.nickname_change_date|date:'c' }}"></span>).</p>
+                </div>
+                <!-- Inline nickname editing div (hidden by default) -->
+                <div id="nickname-edit-div" class="nickname-edit" style="display: none;">
+                    <p class="nickname-rules">닉네임은 한글, 영문, 숫자, 공백으로만 가능합니다.</p>
+                    <div class="text-dup">
+                        <input type="text" id="new-nickname" placeholder="새 닉네임 입력">
+                        <button id="dup-check-btn" class="dup-check-btn">중복확인</button>
+                    </div>
+                    <div id="nickname-message" class="nickname-message"></div>
+                    <button id="save-nickname-btn" class="save-nickname-btn">저장</button>
+                </div>
+                <div id="nickname-message2" class="nickname-message2" style="display:none;"></div>
+
+                <div class="field-group">
+                    <div class="label-row">
+                        <label class="account_label">보유 포인트</label>
+                        <button class="charge_button">충전</button>
+                    </div>
+                    <div class="relative">
+                        <div class="account_content"  id="coins">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-blue-500"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line></svg>
+                            <div class='coin_value'>
+                                {{ user.coins }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="coin-footer">
+                        <p class="description">현재 보유한 포인트 잔액입니다.</p>
+                        {% comment %} <a href="{% url 'users:coin_history' %}" class="link">코인 사용내역 확인</a> {% endcomment %}
+                        <a href="#" class="link">포인트 사용내역 확인</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Box #2: Toric Calculator Settings -->
+            <div class="toric-calculator-form">
+                <div class="h2_div">
+                    <h2><span class="span_h2">MY</span> 계산기 설정</h2>
+                    <div class="info-icon-container1">
+                        <span class="info-icon1">i</span>
+                        <div class="tooltip1">
+                            해당 설정이 기본값으로 저장되며,<br> 매번 입력해야 하는 번거로움이 사라집니다
+                        </div>
+                    </div>
+                </div>
+            <form id="settings-form" action="{% url 'users:update_settings_ajax' %}" method="post">
+                {% csrf_token %}
+                <!-- Top Section: Surgeon Name (Full width) -->
+                <div class="field1 full-width">
+                    <div class="wrapper">
+                        <label>Surgeon Name
+                        </label>
+                        <div class="info-icon-container">
+                            <span class="info-icon">i</span>
+                            <div class="tooltip">
+                                계산 결과에 나타나는 의사명
+                            </div>
+                        </div>
+                    </div>
+                    <input id="surgeonName" name="surgeon_name" type="text" placeholder="수술 의사명을 입력하세요" 
+                    value="{{ user.surgeon_name|default:user.realname }}" 
+                    data-surgeon="{{ user.surgeon_name }}">
+                </div>
+                <!-- Below: Two Column Grid for Other Settings -->
+                <div class="two-column-grid">
+                <div class="field1">
+                    <div class="wrapper">
+                        <label>Patient Name 옵션</label>
+                        <div class="info-icon-container">
+                            <span class="info-icon">i</span>
+                            <div class="tooltip">
+                                랜덤 선택 시 환자명 자동 생성
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field_content">
+                    <select id="patientNameOption" name="patient_name_option">
+                        {% for key, val in patient_name_options %}
+                        <option value="{{ key }}" {% if user.patient_name_option == key %}selected{% endif %}>{{ val }}</option>
+                        {% endfor %}
+                    </select></div>
+                </div>
+                <div class="field1">
+                    <div class="wrapper">
+                        <label>Patient Age 옵션</label>
+                        <div class="info-icon-container">
+                            <span class="info-icon">i</span>
+                            <div class="tooltip">
+                                랜덤 선택 시 나이 자동 생성
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field_content">
+                    <select id="patientAgeOption" name="patient_age_option">
+                        {% for key, val in patient_age_options %}
+                        <option value="{{ key }}" {% if user.patient_age_option == key %}selected{% endif %}>{{ val }}</option>
+                        {% endfor %}
+                    </select></div>
+                </div>
+                <div class="field">
+                    <label>SIA (OD)</label>
+                    <div class="field_content">
+                    <input id="odSIA" name="od_sia" type="number" step="0.01" min="0"  placeholder="OD SIA" value="{{ user.od_sia }}">
+                </div></div>
+                <div class="field">
+                    <label>Incision Site (OD)</label>
+                    <div class="field_content">
+                    <input id="odSIAMeridian" name="od_sia_meridian" type="number" min="0" max="360" placeholder="OD SIA Meridian" value="{{ user.od_sia_meridian }}">
+                </div></div>
+                <div class="field">
+                    <label >SIA (OS)</label>
+                    <div class="field_content">
+                    <input id="osSIA" name="os_sia" type="number" step="0.01" min="0"  placeholder="OS SIA" value="{{ user.os_sia }}">
+                </div></div>
+                <div class="field">
+                    <label >Incision Site (OS)</label>
+                    <div class="field_content">
+                    <input id="osSIAMeridian" name="os_sia_meridian" type="number" min="0" max="360" placeholder="OS SIA Meridian" value="{{ user.os_sia_meridian }}">
+                </div></div>
+                </div>
+                <div class="field full-width iris-image">
+                    <div class="field iris-image">
+                    <img src="{% static 'users/images/iris.png' %}" alt="Iris">
+                </div>
+                </div>
+                <div class="two-column-grid">
+                    <div class="field">
+                        <label >K Notation</label>
+                        <div class="field_content">
+                        <select id="KNotation" name="K_notation">
+                            {% for key, val in K_notation_choices %}
+                            <option value="{{ key }}" {% if user.K_notation == key %}selected{% endif %}>{{ val }}</option>
+                            {% endfor %}
+                        </select></div>
+                    </div>
+                    <div class="field">
+                        <label >K Index</label>
+                        <div class="field_content">
+                        <select id="kIndex" name="k_index">
+                        {% for key, val in k_index_choices %}
+                            <option value="{{ key }}" {% if user.k_index == key %}selected{% endif %}>{{ val }}</option>
+                        {% endfor %}
+                        </select></div>
+                    </div>
+                    <div class="field1">
+                        <div class="wrapper">
+                            <label>PCA <span class="field1_small">(후면 각막난시 nomogram)</span></label>
+                            <div class="info-icon-container">
+                                <span class="info-icon">i</span>
+                                <div class="tooltip2">
+                                    PCA yes, TK no <br>→ K1, K2 입력 후 PCA 적용 <br><br>                                
+                                    PCA no, TK yes <br>→ TK1, TK2 입력, PCA 적용 안함
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field_content">
+                            <select id="PCA" name="PCA_option">
+                            {% for key, val in PCA_choices %}
+                                <option value="{{ key }}" {% if user.PCA_option == key %}selected{% endif %}>{{ val }}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field1">
+                        <div class="wrapper">
+                            <label>TK 여부</label>
+                            <div class="info-icon-container">
+                                <span class="info-icon">i</span>
+                                <div class="tooltip2">
+                                    PCA yes, TK no <br>→ K1, K2 입력 후 PCA 적용 <br><br>                                
+                                    PCA no, TK yes <br>→ TK1, TK2 입력, PCA 적용 안함
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field_content">
+                            <select id="tkOption" name="tk_option">
+                            {% for key, val in TK_choices %}
+                            <option value="{{ key }}" {% if user.tk_option == key %}selected{% endif %}>{{ val }}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label >Cylinder 옵션</label>
+                        <div class="field_content">
+                        <select id="CylinderOption" name="cyl_option">
+                        {% for key, val in cyl_choices %}
+                            <option value="{{ key }}" {% if user.cyl_option == key %}selected{% endif %}>{{ val }}</option>
+                        {% endfor %}
+                        </select></div>
+                    </div>
+                    <div class="field">
+                        <label>Biometry Method</label>
+                        <div class="field_content">
+                        <select id="BiometryMethod" name="biometry_method">
+                        {% for key, val in biometry_method_choices %}
+                            <option value="{{ key }}" {% if user.biometry_method == key %}selected{% endif %}>{{ val }}</option>
+                        {% endfor %}
+                        </select></div>
+                    </div>
+                    <div class="field">
+                        <div class="wrapper">
+                            <label >공식 선택 (Alcon)</label>
+                            <div class="info-icon-container">
+                                <span class="info-icon">i</span>
+                                <div class="tooltip2">
+                                    Alcon 에만 적용되는 설정입니다.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field_content">
+                        <select id="FormulaOption" name="formula_option">
+                        {% for key, val in formula_choices %}
+                            <option value="{{ key }}" {% if user.formula_option == key %}selected{% endif %}>{{ val }}</option>
+                        {% endfor %}
+                        </select></div>
+                    </div>
+                    <div class="field">
+                        <div class="wrapper">
+                            <label >TOTAL SIA (Alcon Holladay)</label>
+                            <div class="info-icon-container">
+                                <span class="info-icon">i</span>
+                                <div class="tooltip2">
+                                    Alcon 에만 적용되는 설정입니다.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field_content">
+                        <select id="siaOption" name="sia_alcon_option">
+                        {% for key, val in SIA_ALCON_choices %}
+                            <option value="{{ key }}" {% if user.sia_alcon_option == key %}selected{% endif %}>{{ val }}</option>
+                        {% endfor %}
+                        </select></div>
+                    </div>
+                </div>
+                <div class="button_div">
+                    <button type="submit" class="action-btn">설정 저장하기</button>
+                </div>
+            </form>
+            <div id="settings-message"></div>
+            </div>
+        </div>
+      
+
+      <!-- Right Column: Previous Calculations -->
+        <div class"right-wrapper">
+            <div class="previous-calculations">
+                <div class="h2_div">
+                <h2><span class="span_h2">MY</span> IOLM 추출 결과</h2>
+                </div>
+            <table class="prev-calc-table">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Preview</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for calc in page_obj %}
+                <tr>
+                    <td>
+                        <span class="date-container" data-date="{{ calc.date|date:'c' }}">
+                            <strong class="formatted-date"></strong><br>
+                            <span class="formatted-time"></span>
+                        </span>
+                    </td>
+                    <td>
+                    <div class="preview" onclick="toggleDetails('calc{{ calc.id }}')">
+                        <div class="eye-label-div">
+                            <span class="eye-label {% if calc.eye == 'OD' %}od-label{% else %}os-label{% endif %}">{{ calc.eye }}</span>
+                        </div>
+                        <span class="preview-text">
+                            <strong>AXL: </strong>{{ calc.axl }}, <strong>ACD: </strong>{{ calc.acd }}, <strong>K1: </strong>{{ calc.k1 }}, <strong>K2: </strong>{{ calc.k2 }}
+                        </span>
+                        <button class="dropdown-btn">
+                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" class="arrow_bracket">
+                                <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" 
+                                fill="currentColor" stroke="currentColor" stroke-width="1.5" fill-rule="evenodd" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div id="calc{{ calc.id }}" class="calc-details">
+                        <table class="details-table">
+                            <tbody>
+                                {% if calc.lt %}  
+                                <tr><td><strong>LT</strong></td> <td>{{ calc.lt }}</td></tr>
+                                {% endif %}
+                                {% if calc.cct %}
+                                <tr><td><strong>CCT</strong></td> <td>{{ calc.cct }}</td></tr>
+                                {% endif %}
+                                {% if calc.wtw %}
+                                <tr><td><strong>WTW</strong></td> <td>{{ calc.wtw }}</td></tr>
+                                {% endif %}
+                                {% if calc.k1 %}
+                                <tr><td><strong>Flat K1</strong></td> <td>{{ calc.k1 }} @ {{ calc.k1_m }}°</td></tr>
+                                {% endif %}
+                                {% if calc.k2 %}
+                                <tr><td><strong>Steep K2</strong></td> <td>{{ calc.k2 }} @ {{ calc.k2_m }}°</td></tr>
+                                {% endif %}
+                                {% if calc.tk1 %}
+                                <tr><td><strong>Flat TK1</strong></td> <td>{{ calc.tk1 }} @ {{ calc.tk1_m }}°</td></tr>
+                                {% endif %}
+                                {% if calc.tk2 %}
+                                <tr><td><strong>Steep TK2</strong></td> <td>{{ calc.tk2 }} @ {{ calc.tk2_m }}°</td></tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                
+                    </div>
+                    </td>
+                    <td class="action-cell">
+                    <button class="calculation-btn" data-result-id="{{ calc.id }}">
+                        <div>계산</div>
+                    </button>
+                    <button class="edit-btn" data-result-id="{{ calc.id }}">
+                        <div>사진</div>
+                    </button>
+                    <button class="delete-btn" data-result-id="{{ calc.id }}">
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 6h18" />
+                                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                <path d="M10 11v6" />
+                                <path d="M14 11v6" />
+                                <path d="M5 6h14l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6z" />
+                            </svg>
+                        </div>
+                    </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">아직 계산 결과가 없습니다.</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" class="pagination-link">이전</a>
+                {% endif %}
+            
+                {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <span class="pagination-link active">{{ num }}</span>
+                {% else %}
+                    <a href="?page={{ num }}" class="pagination-link">{{ num }}</a>
+                {% endif %}
+                {% endfor %}
+            
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="pagination-link">다음</a>
+                {% endif %}
+            </div>
+            
+            </div>
+        </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 AI TORIC. All rights reserved.</p>
+  </footer>
+
+  <script>
+    var checkNicknameURL = "{% url 'users:check_nickname_ajax' %}";
+    var updateNicknameURL = "{% url 'users:update_nickname_ajax' %}";
+  </script>
+  <script src="{% static 'users/js/settings.js' %}"></script>
+  <script src="{% static 'users/js/dashboard.js' %}"></script>
+</body>
+</html>

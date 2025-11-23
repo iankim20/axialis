@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AI TORIC</title>
+    <link rel="stylesheet" href="{% static 'users/css/login.css' %}">
+</head>
+
+<body>
+    <div class="auth-container">
+        <h1>Login to AI TORIC</h1>
+        <p>카카오톡 계정을 사용하시면 AI TORIC을 간편하게 이용하실 수 있습니다.</p>
+        <a class="btn btn-kakao" href="{% url 'users:kakao_login' %}">
+            <img src="{% static 'users/images/kakao_logo.svg' %}" alt="Kakao Logo">
+            카카오톡으로 로그인
+        </a>
+    </div>
+</body>
+
+</html>

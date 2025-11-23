@@ -11,6 +11,14 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import sys
+import os
+from dotenv import load_dotenv
+from django.utils.timezone import activate
+
+load_dotenv()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+KAKAO_REST_API_KEY = os.getenv("KAKAO_REST_API_KEY")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +35,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = "users.CustomUser"
+
 
 # Application definition
 
@@ -37,6 +47,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "users",
+    "iolm",
+    "billing",
 ]
 
 MIDDLEWARE = [
@@ -54,7 +67,7 @@ ROOT_URLCONF = 'axialis.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],  # ← 이 줄 추가/수정
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -99,6 +112,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+KAKAO_REST_API_KEY = KAKAO_REST_API_KEY
+KAKAO_REDIRECT_URI = 'http://127.0.0.1:8000/users/kakao/callback/'
+# KAKAO_REDIRECT_URI = 'https://axialis.ai/users/kakao/callback/'
+KAKAO_LOGOUT_REDIRECT_URI = 'http://127.0.0.1:8000/users/logout_complete/'
+# KAKAO_LOGOUT_REDIRECT_URI = 'https://axialis.ai/users/logout_complete/'
+
+LOGIN_URL = '/users/login/' 
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+]
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -116,6 +141,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

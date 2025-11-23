@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Axialis - Login</title>
+  <link rel="stylesheet" href="{% static 'users/css/login.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <img src="{% static 'logo_blue.png' %}" alt="Axialis">
+      <a class="logo-text" href="{% url 'landing' %}">Axialis</a>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="login-box">
+      <h1>Axialis 로그인</h1>
+      <p>카카오톡 계정을 사용하여<br> Axialis를 간편하게 이용하실 수 있습니다.</p>
+      <a class="kakao-login" href="{% url 'users:kakao_login' %}">
+        <img src="{% static 'users/images/kakao_logo.svg' %}" alt="Kakao Logo">
+        카카오톡으로 로그인
+      </a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 Axialis. All rights reserved.</p>
+  </footer>
+</body>
+</html>
