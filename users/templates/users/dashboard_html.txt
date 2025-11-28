@@ -6,15 +6,21 @@
   <title>Axialis - Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'users/css/dashboard.css' %}">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <!-- 가독성 좋은 Inter / Noto Sans KR 폰트 -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
 </head>
 <body>
-  <!-- Navigation (landing 과 동일 스타일, 로그인 대신 로그아웃) -->
+  <!-- Navigation -->
   <header class="nav">
     <div class="nav-inner">
       <div class="nav-left">
-        <a href="{% url 'landing' %}" class="logo">Axialis</a>
+        <a href="{% url 'landing' %}" class="logo-link">
+            <!-- 로고 이미지 -->
+            <img src="{% static 'logo_blue.png' %}" alt="Axialis" class="logo-img">
+            <!-- [요청 1] Axialis 텍스트 파란색 -->
+            <span class="logo-text">Axialis</span>
+        </a>
       </div>
       <nav class="nav-right">
         <a href="{% url 'iolm:upload' %}" class="nav-link">IOLM 데이터 추출</a>
@@ -28,13 +34,13 @@
 
   <main class="dashboard">
     <div class="dashboard-inner">
-      <!-- 좌측 사이드바 -->
+      <!-- Sidebar -->
       <aside class="sidebar">
-        <!-- 유저 카드 -->
+        <!-- User Card -->
         <section class="card user-card">
           <div class="user-avatar">
             {% if user.profile_image %}
-              <img src="{{ user.profile_image }}" alt="{{ user.realname|default:user.username }}">
+              <img src="{{ user.profile_image }}" alt="Profile">
             {% else %}
               <div class="avatar-fallback">
                 {{ user.realname|default:user.username|first|upper }}
@@ -42,186 +48,180 @@
             {% endif %}
           </div>
           <div class="user-info">
-            <div class="user-name">
-              {{ user.realname|default:user.username }}
-            </div>
+            <div class="user-name">{{ user.realname|default:user.username }}</div>
             {% if user.hospital_name %}
-              <div class="user-hospital">
-                {{ user.hospital_name }}
-              </div>
+              <div class="user-hospital">{{ user.hospital_name }}</div>
             {% endif %}
+            <!-- [요청 2] 가입일 복구 -->
             <div class="user-meta">
               가입일: {{ user.created_at|date:"Y-m-d" }}
             </div>
           </div>
         </section>
 
-        <!-- 포인트 카드 -->
+        <!-- Points Card -->
         <section class="card points-card">
           <div class="card-header">
             <h2 class="card-title">포인트</h2>
           </div>
           <div class="points-balance">
-            <span class="points-label">보유 포인트</span>
+            <span class="points-label">잔여 포인트</span>
             <span class="points-value">{{ user.coins|default:0 }}</span>
           </div>
           <div class="points-actions">
-            <button type="button" class="btn btn-primary" id="btn-charge-points">
-              포인트 충전하기
-            </button>
-            <button type="button" class="btn btn-ghost" id="btn-show-points-history">
-              포인트 사용 이력 확인
-            </button>
+            <button type="button" class="btn btn-primary" id="btn-charge-points">충전하기</button>
+            <button type="button" class="btn btn-ghost" id="btn-show-points-history">사용 이력</button>
           </div>
         </section>
 
-{% comment "nickname_block" %}
-<section class="card">
-  <div class="card-header">
-    <h2 class="card-title">닉네임 설정 (준비 중)</h2>
-  </div>
-  <form class="nickname-form">
-    <label for="nickname-input">닉네임</label>
-    <div class="nickname-row">
-      <input
-        id="nickname-input"
-        type="text"
-        name="nickname"
-        maxlength="24"
-        placeholder="예: 강남안과홍의사"
-        value="{{ user.nickname }}">
-      <button type="submit" class="btn btn-small btn-primary">
-        변경하기
-      </button>
-    </div>
-    <p class="hint">※ 닉네임은 추후 커뮤니티/게시판 기능에서 사용될 예정입니다.</p>
-  </form>
-</section>
-{% endcomment %}
-
-
-        <!-- 탈퇴 카드 -->
+        <!-- Danger Zone -->
         <section class="card danger-card">
           <form id="unlink-form" method="post" action="{% url 'users:unlink' %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-danger-full">
-              회원 탈퇴하기
-            </button>
+            <button type="submit" class="btn btn-danger-full">회원 탈퇴</button>
           </form>
         </section>
       </aside>
 
-      <!-- 우측 메인 컨텐츠: 작업물 리스트 -->
+      <!-- Main Content -->
       <section class="content">
         <header class="content-header">
           <div>
             <h1 class="content-title">IOLM 작업 내역</h1>
-            <p class="content-subtitle">
-              가장 최근 작업이 위에 표시됩니다. 최대 15개씩 페이지로 나누어 보여줍니다.
-            </p>
-          </div>
-          <div>
-            <a href="#" class="btn btn-primary btn-small">새 IOLM data 추출하기</a>
+            <p class="content-subtitle">최근 분석 작업 내역 및 결과 파일을 확인할 수 있습니다.</p>
           </div>
         </header>
 
-        <div class="jobs-table-wrapper">
-          <table class="jobs-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>업로드 시각</th>
-                <th>완료 시각</th>
-                <th>처리 시간</th>
-                <th>결과 파일</th>
-                <th>다운로드</th>
-                <th>삭제</th>
-              </tr>
-            </thead>
-            <tbody>
-              {# backend에서 jobs 를 내려준다고 가정 (Paginator page_obj.object_list 같은) #}
-              {% if jobs %}
-                {% for job in jobs %}
-                  <tr class="job-row {% if job.status != 'completed' %}job-row-pending{% endif %}">
-                    <td class="col-id">
-                      {{ forloop.counter0|add:jobs_start_index|default:forloop.counter }}
-                    </td>
-                    <td>
-                      {{ job.created_at|date:"Y-m-d H:i" }}
-                    </td>
-
-                    {% if job.status == "completed" and job.completed_at %}
-                      <td>
-                        {{ job.completed_at|date:"Y-m-d H:i" }}
-                      </td>
-                      <td>
-                        {{ job.process_time_display|default:"-" }}
-                      </td>
-                    {% else %}
-                      <td class="status-cell">
-                        <span class="status-badge">
-                          <span class="spinner"></span>
-                          진행 중...
-                        </span>
-                      </td>
-                      <td class="status-cell">
-                        <span class="status-muted">진행 중...</span>
-                      </td>
-                    {% endif %}
-
-                    <td class="file-col">
-                      {% if job.status == "completed" %}
-                        <a
-                          href="{{ job.download_url|default:'#' }}"
-                          class="file-link"
-                          data-download-url="{{ job.download_url|default:'' }}"
-                        >
-                          {{ job.filename_display|default:"결과 파일" }}
-                        </a>
-                      {% else %}
-                        <span class="status-muted">-</span>
-                      {% endif %}
-                    </td>
-
-                    <td class="icon-col">
-                      {% if job.status == "completed" %}
-                        <button
-                          type="button"
-                          class="icon-button icon-download"
-                          title="다운로드"
-                          data-download-url="{{ job.download_url|default:'' }}"
-                        >
-                          ⬇
-                        </button>
-                      {% else %}
-                        <span class="status-muted">-</span>
-                      {% endif %}
-                    </td>
-
-                    <td class="icon-col">
-                      <button
-                        type="button"
-                        class="icon-button icon-delete"
-                        title="삭제"
-                        data-delete-url="{{ job.delete_url|default:'' }}"
-                      >
-                        🗑
-                      </button>
-                    </td>
-                  </tr>
-                {% endfor %}
-              {% else %}
+        <!-- [요청 3] 테이블 너비 축소는 CSS .jobs-table-container에서 처리 -->
+        <div class="jobs-table-container">
+          <div class="jobs-table-wrapper">
+            <table class="jobs-table">
+              <thead>
+                <!-- [요청 4] 8개 컬럼 정의 -->
                 <tr>
-                  <td colspan="7" class="empty-row">
-                    아직 처리된 작업이 없습니다. 첫 작업을 시작해 보세요.
-                  </td>
+                  <th class="col-id" scope="col">#</th>
+                  <th class="col-date-start" scope="col">업로드 일시</th>
+                  <th class="col-status">상태 / 소요시간</th>
+                  <th class="col-progress">진행률</th>
+                  <th class="col-date-end">완료 일시</th> <!-- New Column -->
+                  <th class="col-file">결과 파일</th>
+                  <th class="col-download">다운로드</th>
+                  <th class="col-delete">삭제</th>
                 </tr>
-              {% endif %}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {% if jobs %}
+                  {% for job in jobs %}
+                    <tr class="job-row {% if job.status == 'completed' %}job-completed{% elif job.status == 'failed' %}job-failed{% else %}job-pending{% endif %}"
+                        {% if job.status == 'pending' or job.status == 'processing' %}
+                          data-job-id="{{ job.id }}"
+                          data-status-url="{% url 'iolm:upload_job_status' job.pk %}"
+                        {% endif %}>
+                      
+                      <!-- 1. Numbering -->
+                      <td class="col-id">{{ forloop.counter }}</td>
+                      
+                      <!-- 2. Uploaded At (줄바꿈 & 중앙 정렬) -->
+                      <td class="col-date-start center-align">
+                        <div class="date-box">
+                          <span class="date-ymd">{{ job.created_at|date:"Y-m-d" }}</span>
+                          <span class="date-time">{{ job.created_at|date:"H:i" }}</span>
+                        </div>
+                      </td>
+
+                      <!-- 3. Status -->
+                      <td class="col-status status-cell">
+                        {% if job.status == "completed" %}
+                          <span class="badge badge-success">완료</span>
+                          <div class="status-time">소요: {{ job.process_time_display|default:"-" }}</div>
+                        {% elif job.status == "failed" %}
+                          <span class="badge badge-danger">실패</span>
+                          <div class="status-time">시스템 오류</div>
+                        {% else %}
+                          <span class="badge badge-processing">
+                            <div class="spinner"></div> 처리 중
+                          </span>
+                          <div class="status-time">분석 진행 중...</div>
+                        {% endif %}
+                      </td>
+
+                      <!-- 4. Progress (Narrow) -->
+                      <td class="col-progress progress-cell">
+                        <div class="progress-track">
+                          <div class="progress-fill {% if job.status == 'failed' %}progress-fill-failed{% endif %}"
+                               style="width: {{ job.progress_percent }}%;"
+                               data-progress-fill></div>
+                        </div>
+                        <div class="progress-text" data-progress-text>
+                          {% if job.num_images %}
+                            {{ job.progress_percent }}% ({{ job.processed_images }}/{{ job.num_images }})
+                          {% else %}
+                            대기 중...
+                          {% endif %}
+                        </div>
+                      </td>
+
+                      <!-- 5. Completed At (NEW, 줄바꿈 & 중앙 정렬) -->
+                      <td class="col-date-end center-align">
+                        {% if job.completed_at %}
+                          <div class="date-box">
+                            <span class="date-ymd">{{ job.completed_at|date:"Y-m-d" }}</span>
+                            <span class="date-time">{{ job.completed_at|date:"H:i" }}</span>
+                          </div>
+                        {% else %}
+                          <span class="text-muted">-</span>
+                        {% endif %}
+                      </td>
+
+                      <!-- 6. Result File (Excel Icon, Always Blue Link) -->
+                      <td class="col-file">
+                        {% if job.status == "completed" %}
+                          <a href="{{ job.download_url }}" class="file-link" data-download-url="{{ job.download_url }}">
+                            <!-- Excel Icon SVG -->
+                            <svg class="file-icon-excel" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2ZM16 18H13V15H16V18ZM16 13H13V10H16V13ZM13 8V4L17 8H13Z"/>
+                            </svg>
+                            <span class="file-name">{{ job.filename_display }}</span>
+                          </a>
+                        {% else %}
+                          <span class="text-muted">-</span>
+                        {% endif %}
+                      </td>
+
+                      <!-- 7. Download (Blue Icon) -->
+                      <td class="col-download center-align">
+                        {% if job.status == "completed" %}
+                          <a href="{{ job.download_url }}" class="btn-icon btn-download-blue" title="다운로드">
+                            ⬇
+                          </a>
+                        {% else %}
+                          -
+                        {% endif %}
+                      </td>
+
+                      <!-- 8. Delete (Red Trashcan) -->
+                      <td class="col-delete center-align">
+                        <button type="button" class="btn-icon btn-delete-red" title="삭제" data-delete-url="{{ job.delete_url }}">
+                          <!-- Trashcan SVG -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                    <td colspan="8" class="empty-state">작업 내역이 없습니다.</td>
+                  </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <!-- 페이지네이션 (Django Paginator의 page_obj 를 쓴다고 가정) -->
+        <!-- Pagination -->
         {% if page_obj %}
           <div class="pagination">
             {% if page_obj.has_previous %}
@@ -229,7 +229,6 @@
             {% else %}
               <span class="page-link disabled">이전</span>
             {% endif %}
-
             {% for num in page_obj.paginator.page_range %}
               {% if num == page_obj.number %}
                 <span class="page-link active">{{ num }}</span>
@@ -237,7 +236,6 @@
                 <a href="?page={{ num }}" class="page-link">{{ num }}</a>
               {% endif %}
             {% endfor %}
-
             {% if page_obj.has_next %}
               <a href="?page={{ page_obj.next_page_number }}" class="page-link">다음</a>
             {% else %}
@@ -248,8 +246,8 @@
       </section>
     </div>
   </main>
-
-  <!-- 포인트 사용 이력 모달 -->
+  
+  <!-- Modal -->
   <div class="modal-backdrop" id="points-history-modal" aria-hidden="true">
     <div class="modal">
       <div class="modal-header">
@@ -267,7 +265,6 @@
             </tr>
           </thead>
           <tbody>
-            {# backend 에서 point_logs 컨텍스트를 내려준다고 가정 #}
             {% if point_logs %}
               {% for log in point_logs %}
                 <tr>
@@ -281,9 +278,7 @@
               {% endfor %}
             {% else %}
               <tr>
-                <td colspan="4" class="empty-row">
-                  아직 포인트 사용 이력이 없습니다.
-                </td>
+                <td colspan="4" class="empty-row">이력이 없습니다.</td>
               </tr>
             {% endif %}
           </tbody>

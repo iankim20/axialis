@@ -203,7 +203,7 @@ def dashboard(request: HttpRequest) -> HttpResponse:
     user = request.user
 
     jobs_qs = UploadJob.objects.filter(user=user).order_by("-created_at")
-    paginator = Paginator(jobs_qs, 15)
+    paginator = Paginator(jobs_qs, 10)
     page_number = request.GET.get("page") or 1
     page_obj = paginator.get_page(page_number)
 

@@ -24,11 +24,10 @@ logger = logging.getLogger("iolm.tasks")
 IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp")
 
 
-# ---- 여기는 Evan이 이미 가지고 있는 OpenAI + cv2 파이프라인과 연결하는 래퍼 ----
 # image_path 하나를 받아서
 #  - rows: 엑셀에 들어갈 dict 리스트 (보통 OD/OS 2개 row)
 #  - usage: OpenAI usage/코스트 정보 dict
-# 를 반환하도록 구현하면 된다.
+# 를 반환
 def run_ocr_for_image(image_path: str) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
     """
     한 장의 IOLM 이미지 파일을 OpenAI OCR 파이프라인(process_iolm_image)에 넘겨서
@@ -172,14 +171,32 @@ def _update_usage(usage_summary: Dict[str, Any], image_name: str, image_usage: D
 def process_upload_job(self, job_id: int) -> None:
     task_id = self.request.id
 
-    job = UploadJob.objects.get(pk=job_id)
+    try:
+        job = UploadJob.objects.get(pk=job_id)
+    except UploadJob.DoesNotExist:
+        logger.error(f"Job {job_id} not found.")
+        return
+    
     logger.info("START job=%s task=%s pid=%s", job.id, task_id, os.getpid())
 
     job.status = UploadJob.Status.PROCESSING
     job.processed_images = 0
+    job.num_images = 0
+    job.num_eyes = 0
     job.error_message = ""
     job.completed_at = None
-    job.save(update_fields=["status", "processed_images", "error_message", "completed_at"])
+    job.updated_at = timezone.now()
+    job.save(
+        update_fields=[
+            "status",
+            "processed_images",
+            "num_images",
+            "num_eyes",
+            "error_message",
+            "completed_at",
+            "updated_at",
+        ]
+    )
 
     usage_summary = _build_usage_aggregator()
 
@@ -187,8 +204,11 @@ def process_upload_job(self, job_id: int) -> None:
         with TemporaryDirectory() as tmpdir:
             image_paths = _extract_zip_images(job.zip_file.path, tmpdir)
             total_images = len(image_paths)
+
+            # DB에 총 이미지 수 업데이트
             job.num_images = total_images
-            job.save(update_fields=["num_images"])
+            job.updated_at = timezone.now()
+            job.save(update_fields=["num_images", "updated_at"])
 
             all_rows: List[Dict[str, Any]] = []
             total_eyes = 0
@@ -208,11 +228,13 @@ def process_upload_job(self, job_id: int) -> None:
                 rows, image_usage = run_ocr_for_image(image_path)
                 eye_count = len(rows)
                 total_eyes += eye_count
-
                 all_rows.extend(rows)
+
                 _update_usage(usage_summary, filename, image_usage, eye_count)
 
                 # 진행률 업데이트 (race condition 줄이려고 update 사용)
+                job.processed_images = idx
+                job.num_eyes = total_eyes
                 UploadJob.objects.filter(pk=job.id).update(
                     processed_images=idx,
                     num_eyes=total_eyes,
@@ -222,12 +244,30 @@ def process_upload_job(self, job_id: int) -> None:
             # 여기서 all_rows 를 가지고 엑셀 파일 생성
             excel_bytes, excel_filename = build_excel_in_memory(all_rows, job)
 
+            # 루프 종료 후 최종 값 명시적으로 고정
+            job.processed_images = total_images
+            job.num_eyes = total_eyes
+
         # 결과 파일 저장 및 최종 상태 업데이트
-        job.result_file.save(excel_filename, ContentFile(excel_bytes))
+        job.result_file.save(excel_filename, ContentFile(excel_bytes), save=False)
+        
         job.status = UploadJob.Status.COMPLETED
         job.completed_at = timezone.now()
         job.usage_summary = usage_summary
-        job.save(update_fields=["status", "completed_at", "result_file", "usage_summary", "num_eyes"])
+        job.updated_at = job.completed_at
+
+        job.save(
+            update_fields=[
+                "status",
+                "completed_at",
+                "result_file",
+                "usage_summary",
+                "num_images",
+                "num_eyes",
+                "processed_images",
+                "updated_at",
+            ]
+        )
 
         logger.info(
             "DONE job=%s task=%s images=%s eyes=%s pid=%s",
@@ -243,15 +283,19 @@ def process_upload_job(self, job_id: int) -> None:
         job.status = UploadJob.Status.FAILED
         job.error_message = str(exc)
         job.completed_at = timezone.now()
-        job.save(update_fields=["status", "error_message", "completed_at"])
+        job.updated_at = job.completed_at
+        job.save(
+            update_fields=[
+                "status",
+                "error_message",
+                "completed_at",
+                "updated_at",
+            ]
+        )
         raise
 
 
 def build_excel_in_memory(rows: List[Dict[str, Any]], job: UploadJob) -> Tuple[bytes, str]:
-    """
-    rows(list[dict])를 받아서 in-memory 엑셀 바이너리(bytes)와 파일명을 반환.
-    Evan이 기존에 쓰던 컬럼/포맷에 맞게 수정해도 된다.
-    """
     import io
 
     from openpyxl import Workbook

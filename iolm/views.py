@@ -17,6 +17,9 @@ from .models import UploadJob
 from .tasks import process_upload_job   
 from django.conf import settings
 
+from zoneinfo import ZoneInfo
+from django.utils import timezone
+
 
 def upload_page(request):
     max_bytes = settings.IOLM_MAX_UPLOAD_BYTES
@@ -88,9 +91,30 @@ def download_result(request: HttpRequest, pk: int) -> HttpResponse:
     except FileNotFoundError:
         raise Http404("파일을 찾을 수 없습니다.")
 
-    filename = job.filename_display or "iolm_result.xlsx"
+    # === NEW: 클라이언트 타임존을 이용해 로컬 시간 기준 파일명 생성 ===
+    completed = job.completed_at or job.created_at
+
+    tz_name = request.GET.get("tz")  # ex) "Asia/Seoul"
+    if tz_name:
+        try:
+            user_tz = ZoneInfo(tz_name)
+            completed_local = completed.astimezone(user_tz)
+        except Exception:
+            # 잘못된 tz 문자열이 와도 그냥 서버 기본 타임존 기준으로 처리
+            completed_local = timezone.localtime(completed)
+    else:
+        completed_local = timezone.localtime(completed)
+
+    if job.num_eyes:
+        ts = completed_local.strftime("%Y-%m-%d %H-%M")
+        filename = f"{ts}_{job.num_eyes} eyes_output.xlsx"
+    else:
+        # 안전망: 기존 로직 유지
+        filename = job.filename_display or "iolm_result.xlsx"
+
     response = FileResponse(file_handle, as_attachment=True, filename=filename)
     return response
+
 
 
 @login_required
@@ -123,7 +147,7 @@ def upload_job_status(request, pk: int) -> JsonResponse:
 
     data = {
         "status": job.status,
-        "processed_images": job.processed_images,
+        "processed_images": job.processed_images or 0,
         "total_images": job.num_images or 0,
         "progress_percent": job.progress_percent,
         "completed": job.status == UploadJob.Status.COMPLETED,

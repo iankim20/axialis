@@ -1,0 +1,324 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Axialis - Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'users/css/dashboard.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+</head>
+<body>
+  <!-- Navigation -->
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="{% url 'landing' %}" class="logo">Axialis</a>
+      </div>
+      <nav class="nav-right">
+        <a href="{% url 'iolm:upload' %}" class="nav-link">IOLM 데이터 추출</a>
+        <a class="nav-link nav-link-disabled">Visual Field</a>
+        <a class="nav-link nav-link-disabled">Topo</a>
+        <a href="{% url 'users:dashboard' %}" class="nav-link nav-link-active">마이페이지</a>
+        <a href="{% url 'users:logout' %}" class="nav-link nav-link-logout">로그아웃</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <div class="dashboard-inner">
+      <!-- 좌측 사이드바 -->
+      <aside class="sidebar">
+        <!-- 유저 카드 -->
+        <section class="card user-card">
+          <div class="user-avatar">
+            {% if user.profile_image %}
+              <img src="{{ user.profile_image }}" alt="{{ user.realname|default:user.username }}">
+            {% else %}
+              <div class="avatar-fallback">
+                {{ user.realname|default:user.username|first|upper }}
+              </div>
+            {% endif %}
+          </div>
+          <div class="user-info">
+            <div class="user-name">
+              {{ user.realname|default:user.username }}
+            </div>
+            {% if user.hospital_name %}
+              <div class="user-hospital">
+                {{ user.hospital_name }}
+              </div>
+            {% endif %}
+            <div class="user-meta">
+              가입일: {{ user.created_at|date:"Y-m-d" }}
+            </div>
+          </div>
+        </section>
+
+        <!-- 포인트 카드 -->
+        <section class="card points-card">
+          <div class="card-header">
+            <h2 class="card-title">포인트</h2>
+          </div>
+          <div class="points-balance">
+            <span class="points-label">보유 포인트</span>
+            <span class="points-value">{{ user.coins|default:0 }}</span>
+          </div>
+          <div class="points-actions">
+            <button type="button" class="btn btn-primary" id="btn-charge-points">
+              포인트 충전하기
+            </button>
+            <button type="button" class="btn btn-ghost" id="btn-show-points-history">
+              포인트 사용 이력 확인
+            </button>
+          </div>
+        </section>
+
+        <!-- 탈퇴 카드 -->
+        <section class="card danger-card">
+          <form id="unlink-form" method="post" action="{% url 'users:unlink' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger-full">
+              회원 탈퇴하기
+            </button>
+          </form>
+        </section>
+      </aside>
+
+      <!-- 우측 메인 컨텐츠: 작업 리스트 -->
+      <section class="content">
+        <header class="content-header">
+          <div>
+            <h1 class="content-title">IOLM 작업 내역</h1>
+            <p class="content-subtitle">
+              가장 최근 작업이 위에 표시됩니다. 최대 15개씩 페이지로 나누어 보여줍니다.
+            </p>
+          </div>
+        </header>
+
+        <div class="jobs-table-wrapper">
+          <table class="jobs-table">
+            <thead>
+              <tr>
+                <th class="col-id">#</th>
+                <th class="col-uploaded-at">업로드 시각</th>
+                <th class="col-status">상태 / 처리 시간</th>
+                <th class="col-progress">진행률</th>
+                <th class="col-completed-at">완료 시각</th>
+                <th>결과 파일</th>
+                <th>다운로드</th>
+                <th>삭제</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% if jobs %}
+                {% for job in jobs %}
+                  <tr
+                    class="job-row
+                      {% if job.status == 'completed' %} job-row-completed
+                      {% elif job.status == 'failed' %} job-row-failed
+                      {% else %} job-row-pending{% endif %}"
+                    {% if job.status == 'pending' or job.status == 'processing' %}
+                      data-job-id="{{ job.id }}"
+                      data-status-url="{% url 'iolm:upload_job_status' job.pk %}"
+                    {% endif %}
+                  >
+                    <!-- 순번 -->
+                    <td class="col-id">
+                      {{ forloop.counter }}
+                    </td>
+
+                    <!-- 업로드 시각 -->
+                    <td class="col-uploaded-at" data-uploaded-at="{{ job.created_at|date:'c' }}">
+                      {{ job.created_at|date:"Y-m-d H:i:s" }}
+                    </td>
+
+                    <!-- 상태 / 처리 시간 -->
+                    <td class="status-cell status-col">
+                      {% if job.status == "completed" %}
+                        <span class="status-badge status-badge-completed">
+                          완료
+                        </span>
+                        <div class="status-subtext">
+                          처리 시간: {{ job.process_time_display|default:"-" }}
+                        </div>
+                      {% elif job.status == "failed" %}
+                        <span class="status-badge status-badge-failed">
+                          실패
+                        </span>
+                        <div class="status-subtext">
+                          처리 중 오류가 발생했습니다.
+                        </div>
+                      {% else %}
+                        <span class="status-badge status-badge-processing">
+                          <span class="spinner"></span>
+                          <span class="status-label">처리 중</span>
+                        </span>
+                        <div class="status-subtext">
+                          처리 시간 계산 중...
+                        </div>
+                      {% endif %}
+                    </td>
+
+                    <!-- 진행률 -->
+                    <td class="status-cell status-progress-cell">
+                      <div class="progress-wrapper">
+                        <div class="progress-bar">
+                          <div
+                            class="progress-bar-fill{% if job.status == 'failed' %} progress-bar-fill-failed{% endif %}"
+                            data-progress-fill
+                            style="width: {{ job.progress_percent }}%;"
+                          ></div>
+                        </div>
+                        <div class="progress-text" data-progress-text>
+                          {% if job.num_images %}
+                            {{ job.progress_percent }}% ({{ job.processed_images }}/{{ job.num_images }})
+                          {% else %}
+                            준비 중...
+                          {% endif %}
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- 완료 시각 -->
+                    <td class="col-completed-at">
+                      {% if job.completed_at %}
+                        {{ job.completed_at|date:"Y-m-d H:i:s" }}
+                      {% else %}
+                        -
+                      {% endif %}
+                    </td>
+
+                    <!-- 결과 파일 -->
+                    <td class="file-col">
+                      {% if job.status == "completed" %}
+                        <a
+                          href="{{ job.download_url|default:'#' }}"
+                          class="file-link"
+                          data-download-url="{{ job.download_url|default:'' }}"
+                        >
+                          {{ job.filename_display|default:"결과 파일" }}
+                        </a>
+                      {% else %}
+                        <span class="status-muted">-</span>
+                      {% endif %}
+                    </td>
+
+                    <!-- 다운로드 버튼 -->
+                    <td class="icon-col">
+                      {% if job.status == "completed" %}
+                        <button
+                          type="button"
+                          class="icon-button icon-download"
+                          title="다운로드"
+                          data-download-url="{{ job.download_url|default:'' }}"
+                        >
+                          ⬇
+                        </button>
+                      {% else %}
+                        <span class="status-muted">-</span>
+                      {% endif %}
+                    </td>
+
+                    <!-- 삭제 버튼 -->
+                    <td class="icon-col">
+                      <button
+                        type="button"
+                        class="icon-button icon-delete"
+                        title="삭제"
+                        data-delete-url="{{ job.delete_url|default:'' }}"
+                      >
+                        🗑
+                      </button>
+                    </td>
+                  </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td colspan="8" class="empty-row">
+                    아직 처리된 작업이 없습니다. 첫 작업을 시작해 보세요.
+                  </td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 페이지네이션 -->
+        {% if page_obj %}
+          <div class="pagination">
+            {% if page_obj.has_previous %}
+              <a href="?page={{ page_obj.previous_page_number }}" class="page-link">이전</a>
+            {% else %}
+              <span class="page-link disabled">이전</span>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+              {% if num == page_obj.number %}
+                <span class="page-link active">{{ num }}</span>
+              {% else %}
+                <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+              {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}" class="page-link">다음</a>
+            {% else %}
+              <span class="page-link disabled">다음</span>
+            {% endif %}
+          </div>
+        {% endif %}
+      </section>
+    </div>
+  </main>
+
+  <!-- 포인트 사용 이력 모달 -->
+  <div class="modal-backdrop" id="points-history-modal" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>포인트 사용 이력</h2>
+        <button type="button" class="modal-close" data-modal-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>일시</th>
+              <th>내역</th>
+              <th>변동</th>
+              <th>잔액</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if point_logs %}
+              {% for log in point_logs %}
+                <tr>
+                  <td>{{ log.created_at|date:"Y-m-d H:i" }}</td>
+                  <td>{{ log.reason }}</td>
+                  <td class="{% if log.delta > 0 %}delta-plus{% else %}delta-minus{% endif %}">
+                    {% if log.delta > 0 %}+{% endif %}{{ log.delta }}
+                  </td>
+                  <td>{{ log.balance_after }}</td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="4" class="empty-row">
+                  아직 포인트 사용 이력이 없습니다.
+                </td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" data-modal-close>닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'users/js/dashboard.js' %}"></script>
+</body>
+</html>

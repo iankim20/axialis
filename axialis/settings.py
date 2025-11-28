@@ -95,6 +95,13 @@ DATABASES = {
     }
 }
 
+# import dj_database_url
+# DATABASES = {
+#     "default": dj_database_url.parse(
+#         os.environ.get("DATABASE_URL"),  # Render Postgres URL
+#         conn_max_age=600,
+#     )
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -171,7 +178,6 @@ IOLM_MAX_UPLOAD_BYTES = 300 * 1024 * 1024  # 200MB
 
 ### storage-related
 
-
 ### later, when integrating S3
 # DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
@@ -197,6 +203,14 @@ CELERY_RESULT_BACKEND = "redis://localhost:6379/1"  # (선택) 결과 저장
 CELERY_TIMEZONE = "Asia/Seoul"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 60 * 90  # 30분 타임아웃 예시
+# Celery가 print/stdout 를 logging 으로 보낼지 여부 (기본 True지만 명시해두는 편이 좋음)
+CELERY_WORKER_REDIRECT_STDOUTS = True
+CELERY_WORKER_REDIRECT_STDOUTS_LEVEL = "INFO"  # print 도 INFO 로 취급
+
+# Django LOGGING 을 그대로 쓰고 싶으면 추천
+CELERY_WORKER_HIJACK_ROOT_LOGGER = False
+
+
 
 LOG_DIR = BASE_DIR / "logs"
 LOG_DIR.mkdir(exist_ok=True)
@@ -204,33 +218,91 @@ LOG_DIR.mkdir(exist_ok=True)
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+
     "formatters": {
+        "default": {
+            "format": "[{asctime}] {levelname} {name}: {message}",
+            "style": "{",
+        },
         "celery": {
-            "format": (
-                "[{asctime}] [{levelname}] "
-                "[{processName}:{process}] "
-                "{name} {message}"
-            ),
+            "format": "[{asctime}] {levelname}/{processName} {name}: {message}",
             "style": "{",
         },
     },
+
     "handlers": {
-        "celery_console": {
+        # 터미널 출력용
+        "console": {
             "class": "logging.StreamHandler",
+            "formatter": "default",
+        },
+
+        # 1) 기존 celery + task 로그용
+        "celery_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": BASE_DIR / "logs" / "celery.log",
+            "maxBytes": 10 * 1024 * 1024,
+            "backupCount": 5,
             "formatter": "celery",
         },
-        "celery_file": {
-            "class": "logging.FileHandler",
-            "filename": str(LOG_DIR / "celery.log"),
+
+        # 2) stdout(print) 전용 로그용
+        "celery_console_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": BASE_DIR / "logs" / "celery_console.log",
+            "maxBytes": 10 * 1024 * 1024,
+            "backupCount": 5,
             "formatter": "celery",
         },
     },
+
     "loggers": {
-        # iolm.tasks 안에서 logging.getLogger(__name__) 사용
+        # Django 기본
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": True,
+        },
+
         "iolm.tasks": {
-            "handlers": ["celery_console", "celery_file"],
+            "handlers": ["console", "celery_file"],
             "level": "INFO",
             "propagate": False,
         },
+
+        # Celery 코어 로그 (worker 시작/종료, task succeed 등)
+        "celery": {
+            "handlers": ["console", "celery_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+
+        # stdout/stderr 가 redirect 되는 logger
+        "celery.redirected": {
+            "handlers": ["console", "celery_console_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+
+        "httpx": {
+            # httpx HTTP Request 로그를 stdout 그룹(celery_console.log)에 넣기
+            "handlers": ["console", "celery_console_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+
+        "openai": {
+            # 필요하면 OpenAI 라이브러리 로그도 같이 모으기
+            "handlers": ["console", "celery_console_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        # 그 외 루트 logger (원하면 여기에도 celery_file 달 수 있음)
+        "": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
     },
 }
+
+
