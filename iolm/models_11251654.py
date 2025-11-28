@@ -32,12 +32,8 @@ class UploadJob(models.Model):
     )
 
     original_filename = models.CharField(max_length=255)
-
     num_images = models.PositiveIntegerField(blank=True, null=True)
     num_eyes = models.PositiveIntegerField(blank=True, null=True)
-    
-    # 진행률: 지금까지 처리된 이미지 수
-    processed_images = models.PositiveIntegerField(default=0)
 
     status = models.CharField(
         max_length=16,
@@ -51,9 +47,6 @@ class UploadJob(models.Model):
     completed_at = models.DateTimeField(blank=True, null=True)
 
     error_message = models.TextField(blank=True)
-
-    # OpenAI usage 등 집계용 JSON
-    usage_summary = models.JSONField(blank=True, null=True, default=dict)
 
     class Meta:
         ordering = ["-created_at"]
@@ -95,11 +88,3 @@ class UploadJob(models.Model):
     @property
     def delete_url(self) -> str:
         return reverse("iolm:delete_job", kwargs={"pk": self.pk})
-
-    @property
-    def progress_percent(self) -> int:
-        if not self.num_images:
-            return 0
-        if self.processed_images >= self.num_images:
-            return 100
-        return int(self.processed_images * 100 / self.num_images)

@@ -10,7 +10,7 @@
   <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
 </head>
 <body>
-  <!-- Navigation -->
+  <!-- Navigation (landing 과 동일 스타일, 로그인 대신 로그아웃) -->
   <header class="nav">
     <div class="nav-inner">
       <div class="nav-left">
@@ -75,6 +75,31 @@
           </div>
         </section>
 
+{% comment "nickname_block" %}
+<section class="card">
+  <div class="card-header">
+    <h2 class="card-title">닉네임 설정 (준비 중)</h2>
+  </div>
+  <form class="nickname-form">
+    <label for="nickname-input">닉네임</label>
+    <div class="nickname-row">
+      <input
+        id="nickname-input"
+        type="text"
+        name="nickname"
+        maxlength="24"
+        placeholder="예: 강남안과홍의사"
+        value="{{ user.nickname }}">
+      <button type="submit" class="btn btn-small btn-primary">
+        변경하기
+      </button>
+    </div>
+    <p class="hint">※ 닉네임은 추후 커뮤니티/게시판 기능에서 사용될 예정입니다.</p>
+  </form>
+</section>
+{% endcomment %}
+
+
         <!-- 탈퇴 카드 -->
         <section class="card danger-card">
           <form id="unlink-form" method="post" action="{% url 'users:unlink' %}">
@@ -86,7 +111,7 @@
         </section>
       </aside>
 
-      <!-- 우측 메인 컨텐츠: 작업 리스트 -->
+      <!-- 우측 메인 컨텐츠: 작업물 리스트 -->
       <section class="content">
         <header class="content-header">
           <div>
@@ -95,103 +120,55 @@
               가장 최근 작업이 위에 표시됩니다. 최대 15개씩 페이지로 나누어 보여줍니다.
             </p>
           </div>
+          <div>
+            <a href="#" class="btn btn-primary btn-small">새 IOLM data 추출하기</a>
+          </div>
         </header>
 
         <div class="jobs-table-wrapper">
           <table class="jobs-table">
             <thead>
               <tr>
-                <th class="col-id">#</th>
-                <th class="col-uploaded-at">업로드 시각</th>
-                <th class="col-status">상태 / 처리 시간</th>
-                <th class="col-progress">진행률</th>
-                <th class="col-completed-at">완료 시각</th>
+                <th>#</th>
+                <th>업로드 시각</th>
+                <th>완료 시각</th>
+                <th>처리 시간</th>
                 <th>결과 파일</th>
                 <th>다운로드</th>
                 <th>삭제</th>
               </tr>
             </thead>
-
             <tbody>
+              {# backend에서 jobs 를 내려준다고 가정 (Paginator page_obj.object_list 같은) #}
               {% if jobs %}
                 {% for job in jobs %}
-                  <tr
-                    class="job-row
-                      {% if job.status == 'completed' %} job-row-completed
-                      {% elif job.status == 'failed' %} job-row-failed
-                      {% else %} job-row-pending{% endif %}"
-                    {% if job.status == 'pending' or job.status == 'processing' %}
-                      data-job-id="{{ job.id }}"
-                      data-status-url="{% url 'iolm:upload_job_status' job.pk %}"
-                    {% endif %}
-                  >
-                    <!-- 순번 -->
+                  <tr class="job-row {% if job.status != 'completed' %}job-row-pending{% endif %}">
                     <td class="col-id">
-                      {{ forloop.counter }}
+                      {{ forloop.counter0|add:jobs_start_index|default:forloop.counter }}
+                    </td>
+                    <td>
+                      {{ job.created_at|date:"Y-m-d H:i" }}
                     </td>
 
-                    <!-- 업로드 시각 -->
-                    <td class="col-uploaded-at" data-uploaded-at="{{ job.created_at|date:'c' }}">
-                      {{ job.created_at|date:"Y-m-d H:i:s" }}
-                    </td>
-
-                    <!-- 상태 / 처리 시간 -->
-                    <td class="status-cell status-col">
-                      {% if job.status == "completed" %}
-                        <span class="status-badge status-badge-completed">
-                          완료
-                        </span>
-                        <div class="status-subtext">
-                          처리 시간: {{ job.process_time_display|default:"-" }}
-                        </div>
-                      {% elif job.status == "failed" %}
-                        <span class="status-badge status-badge-failed">
-                          실패
-                        </span>
-                        <div class="status-subtext">
-                          처리 중 오류가 발생했습니다.
-                        </div>
-                      {% else %}
-                        <span class="status-badge status-badge-processing">
+                    {% if job.status == "completed" and job.completed_at %}
+                      <td>
+                        {{ job.completed_at|date:"Y-m-d H:i" }}
+                      </td>
+                      <td>
+                        {{ job.process_time_display|default:"-" }}
+                      </td>
+                    {% else %}
+                      <td class="status-cell">
+                        <span class="status-badge">
                           <span class="spinner"></span>
-                          <span class="status-label">처리 중</span>
+                          진행 중...
                         </span>
-                        <div class="status-subtext">
-                          처리 시간 계산 중...
-                        </div>
-                      {% endif %}
-                    </td>
+                      </td>
+                      <td class="status-cell">
+                        <span class="status-muted">진행 중...</span>
+                      </td>
+                    {% endif %}
 
-                    <!-- 진행률 -->
-                    <td class="status-cell status-progress-cell">
-                      <div class="progress-wrapper">
-                        <div class="progress-bar">
-                          <div
-                            class="progress-bar-fill{% if job.status == 'failed' %} progress-bar-fill-failed{% endif %}"
-                            data-progress-fill
-                            style="width: {{ job.progress_percent }}%;"
-                          ></div>
-                        </div>
-                        <div class="progress-text" data-progress-text>
-                          {% if job.num_images %}
-                            {{ job.progress_percent }}% ({{ job.processed_images }}/{{ job.num_images }})
-                          {% else %}
-                            준비 중...
-                          {% endif %}
-                        </div>
-                      </div>
-                    </td>
-
-                    <!-- 완료 시각 -->
-                    <td class="col-completed-at">
-                      {% if job.completed_at %}
-                        {{ job.completed_at|date:"Y-m-d H:i:s" }}
-                      {% else %}
-                        -
-                      {% endif %}
-                    </td>
-
-                    <!-- 결과 파일 -->
                     <td class="file-col">
                       {% if job.status == "completed" %}
                         <a
@@ -206,7 +183,6 @@
                       {% endif %}
                     </td>
 
-                    <!-- 다운로드 버튼 -->
                     <td class="icon-col">
                       {% if job.status == "completed" %}
                         <button
@@ -222,7 +198,6 @@
                       {% endif %}
                     </td>
 
-                    <!-- 삭제 버튼 -->
                     <td class="icon-col">
                       <button
                         type="button"
@@ -237,7 +212,7 @@
                 {% endfor %}
               {% else %}
                 <tr>
-                  <td colspan="8" class="empty-row">
+                  <td colspan="7" class="empty-row">
                     아직 처리된 작업이 없습니다. 첫 작업을 시작해 보세요.
                   </td>
                 </tr>
@@ -246,7 +221,7 @@
           </table>
         </div>
 
-        <!-- 페이지네이션 -->
+        <!-- 페이지네이션 (Django Paginator의 page_obj 를 쓴다고 가정) -->
         {% if page_obj %}
           <div class="pagination">
             {% if page_obj.has_previous %}
@@ -292,6 +267,7 @@
             </tr>
           </thead>
           <tbody>
+            {# backend 에서 point_logs 컨텍스트를 내려준다고 가정 #}
             {% if point_logs %}
               {% for log in point_logs %}
                 <tr>

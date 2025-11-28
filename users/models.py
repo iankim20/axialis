@@ -18,7 +18,7 @@ class CustomUser(AbstractUser):
     # 앞으로 크레딧/건수 과금 모델에 쓸 수 있는 필드
     coins = models.PositiveIntegerField(default=0)
 
-    # (선택) 병원/기관 정보 정도는 나중에 쓰기 좋으니 하나쯤 추가해도 됨
+    # 병원/기관 정보
     hospital_name = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self) -> str:

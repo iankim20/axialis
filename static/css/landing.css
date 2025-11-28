@@ -57,6 +57,49 @@ body {
   font-weight: 500;
 }
 
+/* Disabled nav item (공통 규칙) */
+.nav-link-disabled {
+  opacity: 0.45;
+  cursor: default;
+  position: relative;
+}
+
+/* hover 시 "기능 준비 중입니다" 표시 */
+.nav-link-disabled::after {
+  content: "기능 준비 중입니다";
+  position: absolute;
+  top: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: #111827;
+  color: #f9fafb;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.35);
+  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+}
+
+.nav-link-disabled:hover::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* 로그아웃 버튼 (dashboard와 공통 스타일) */
+.nav-link-logout {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.nav-link-logout:hover {
+  color: #b91c1c;
+}
+
+
+
 /* Hero section */
 .hero {
   max-width: 1120px;

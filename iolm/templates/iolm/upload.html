@@ -1,0 +1,396 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Axialis - IOLM 데이터 자동 추출</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+  <link rel="stylesheet" href="{% static 'iolm/css/upload.css' %}">
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
+  <!-- JSZip for Client-side ZIP inspection -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+  <!-- 공통 네비게이션 -->
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="{% url 'landing' %}" class="logo">Axialis</a>
+      </div>
+      <nav class="nav-right">
+        <a href="{% url 'iolm:upload' %}" class="nav-link nav-link-active">IOLM 데이터 추출</a>
+        
+        <!-- Disabled Links with Tooltip -->
+        <div class="nav-item-disabled">
+          <span class="nav-link nav-link-disabled">Visual Field</span>
+          <span class="tooltip">기능 준비 중입니다</span>
+        </div>
+        <div class="nav-item-disabled">
+          <span class="nav-link nav-link-disabled">Topo</span>
+          <span class="tooltip">기능 준비 중입니다</span>
+        </div>
+
+        {% if user.is_authenticated %}
+          <a href="{% url 'users:dashboard' %}" class="nav-link">마이페이지</a>
+          <a href="{% url 'users:logout' %}" class="nav-link nav-link-logout">로그아웃</a>
+        {% else %}
+          <a href="{% url 'users:login' %}" class="nav-link nav-login">로그인</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="page-inner">
+
+      {% if not user.is_authenticated %}
+      {# ================================================================== #}
+      {# [비로그인 상태] Landing #}
+      {# ================================================================== #}
+      
+      <section class="hero-section">
+        <div class="hero-content">
+          <span class="hero-badge">Medical AI Solution</span>
+          <h1 class="hero-title">
+            연구용 IOLM 데이터,<br>
+            <span class="text-gradient">AI가 바로 엑셀로 변환합니다.</span>
+          </h1>
+          <p class="hero-desc">
+            수백 장의 IOL-Master 결과지, 더 이상 수기로 입력하지 마세요.<br>
+            ZIP 파일로 업로드하면 Axialis AI가 양안(OD/OS) 데이터를 정확하게 추출하여 정리해 드립니다.
+          </p>
+          
+          <div class="hero-action-area">
+            <!-- CTA Button -->
+            <a href="{% url 'users:login' %}" id="loginTriggerBtn" class="cta-button">
+              3초 만에 로그인하고 AI 체험하기
+            </a>
+            
+            <!-- Floating Finger (SVG) -->
+            <div class="finger-container">
+               <svg xmlns="http://www.w3.org/2000/svg" class="hover-cursor" height="60" width="60" viewBox="0 0 204 204">
+                  <!-- Outer shape -->
+                  <path d="M192.231,104.082V102c0-12.407-10.094-22.5-22.5-22.5c-2.802,0-5.484,0.519-7.961,1.459  
+                           C159.665,70.722,150.583,63,139.731,63c-2.947,0-5.76,0.575-8.341,1.61C128.667,55.162,119.624,48,109.231,48  
+                           c-2.798,0-5.496,0.541-8,1.516V22.5c0-12.407-10.094-22.5-22.5-22.5s-22.5,10.093-22.5,22.5v66.259  
+                           c-3.938-5.029-8.673-9.412-14.169-11.671c-6.133-2.52-12.587-2.219-18.667,0.872c-11.182,5.686-15.792,19.389-10.277,30.548  
+                           l27.95,56.563c0.79,1.552,19.731,38.008,54.023,38.008h40c31.54,0,57.199-25.794,57.199-57.506l-0.031-41.491H192.231z" 
+                        fill="#000000" stroke="#000000" />
+                  <!-- Inner contour -->
+                  <path d="M135.092,188.079h-40c-24.702,0-40.091-28.738-40.646-29.796l-27.88-56.42c-1.924-3.893-0.33-8.519,3.629-10.532  
+                           c2.182-1.11,4.081-1.223,6.158-0.372c8.281,3.395,16.41,19.756,19.586,29.265l2.41,7.259l12.883-4.559V22.5  
+                           c0-4.136,3.364-7.5,7.5-7.5s7.5,3.364,7.5,7.5V109h0.136h14.864h0.136V71c0-4.187,3.748-8,7.864-8c4.262,0,8,3.505,8,7.5v15v26h15  
+                           v-26c0-4.136,3.364-7.5,7.5-7.5s7.5,3.364,7.5,7.5V102v16.5h15V102c0-4.136,3.364-7.5,7.5-7.5s7.5,3.364,7.5,7.5v10.727h0.035  
+                           l0.025,32.852C177.291,169.014,158.36,188.079,135.092,188.079z" 
+                        fill="white" stroke="none" />
+                </svg>
+            </div>
+
+            <!-- Vertical Stacked Info -->
+            <div class="hero-benefits">
+              <div class="benefit-item">
+                <span class="check-icon">✓</span> 이미지 1장당 2 포인트
+              </div>
+              <div class="benefit-item">
+                <span class="check-icon">✓</span> 가입 시 100 포인트 무료
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-image">
+          <div class="img-box">
+            <img src="{% static 'iolm/sample_visual.png' %}" alt="IOLM Analysis Process" onerror="this.src='https://placehold.co/600x400/eef2ff/2563eb?text=IOLM+AI+Process'">
+          </div>
+        </div>
+      </section>
+
+      <!-- Superiority Section -->
+      <section class="feature-section">
+        <div class="section-header">
+          <h2>Why Axialis?</h2>
+          <p>단순 OCR을 넘어선, 안과 데이터 특화 AI 파이프라인</p>
+        </div>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="icon-box">🚀</div>
+            <h3>압도적인 정확도</h3>
+            <p>IOLM 이미지에 Fine-tuning된 최신 Vision Model과 LLM을 결합하여, 기존 OCR이 읽지 못하는 흐릿한 수치까지 정확하게 인식합니다.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon-box">⚡</div>
+            <h3>초고속 대량 처리</h3>
+            <p>EMR에서 다운로드한 수백 장의 검사 결과지를 ZIP 파일 하나로 업로드하세요. 수작업 대비 100배 빠른 속도로 데이터를 구조화합니다.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon-box">🔒</div>
+            <h3>철저한 데이터 보안</h3>
+            <p>업로드된 이미지는 분석 즉시 자동 폐기되며, 그 어떤 경우에도 AI 모델 학습용으로 재사용되지 않습니다. 연구 윤리를 준수합니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Process Section -->
+      <section class="process-section">
+        <div class="section-header">
+          <h2>간편한 사용 방법</h2>
+        </div>
+        <div class="steps-container">
+          <div class="step-item">
+            <span class="step-num">01</span>
+            <h4>ZIP 압축</h4>
+            <p>EMR/PACS에서 IOLM 이미지를 다운받아 하나의 ZIP 파일로 묶습니다.</p>
+          </div>
+          <div class="step-item">
+            <span class="step-num">02</span>
+            <h4>업로드</h4>
+            <p>Axialis에 파일을 드래그하여 업로드합니다. (300MB 미만)</p>
+          </div>
+          <div class="step-item">
+            <span class="step-num">03</span>
+            <h4>자동 변환</h4>
+            <p>AI가 양안(OD/OS) 정보를 인식하여 2행 포맷으로 정리합니다.</p>
+          </div>
+          <div class="step-item">
+            <span class="step-num">04</span>
+            <h4>다운로드</h4>
+            <p>완성된 엑셀 파일을 다운로드하여 연구 통계에 바로 활용하세요.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Promo Popup (Always shows on refresh) -->
+      <div id="promoBox" class="promo-toast hidden">
+        <div class="promo-content">
+          <div class="promo-icon">🎁</div>
+          <div class="promo-text-group">
+            <h4 class="promo-head">신규 가입 특별 혜택</h4>
+            <p class="promo-body">지금 가입하면 <strong>100 포인트 무료</strong> 지급!<br>AI 추출 성능을 직접 확인해보세요.</p>
+          </div>
+          <button class="close-promo" id="closePromo">&times;</button>
+        </div>
+        <a href="{% url 'users:login' %}" class="promo-link">혜택받기 →</a>
+      </div>
+
+      {% else %}
+      {# ================================================================== #}
+      {# [로그인 상태] Auth Upload #}
+      {# ================================================================== #}
+      
+      <section class="auth-header">
+        <h1>IOLM 데이터 추출</h1>
+        <p class="auth-subtitle">IOLMaster 결과지 ZIP 파일을 업로드하면 AI가 분석을 시작합니다.</p>
+      </section>
+
+      <div class="upload-layout">
+        
+        <!-- 왼쪽: 업로드 패널 -->
+        <div class="upload-main">
+          <form id="zip-upload-form" method="post" enctype="multipart/form-data" action="{% url 'iolm:upload_zip' %}" data-max-size="{{ max_size_bytes }}">
+            {% csrf_token %}
+            
+            <div class="upload-card">
+              <!-- Drag Zone -->
+              <div id="drop-area" class="drop-zone">
+                <!-- View 1: Default -->
+                <div class="drop-content default-view">
+                  <div class="icon-cloud-upload">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  </div>
+                  <h3>ZIP 파일을 이곳에 드래그하세요</h3>
+                  <p class="sub-text">또는 우측 하단의 [파일 탐색기 열기] 버튼을 사용하세요</p>
+                  <span class="meta-text">지원 형식: .zip (최대 {{ max_size_mb }}MB)</span>
+                </div>
+
+                <!-- View 2: Analyzing -->
+                <div class="drop-content analyzing-view" hidden>
+                  <div class="spinner-sm"></div>
+                  <h3>파일 분석 중...</h3>
+                  <p class="sub-text">이미지 개수를 확인하고 있습니다.</p>
+                </div>
+
+                <!-- View 3: Selected -->
+                <div class="drop-content file-selected-view" hidden>
+                  <div class="file-icon">📦</div>
+                  <h3 id="file-name" class="selected-filename">filename.zip</h3>
+                  <p id="file-size" class="selected-filesize">0 MB</p>
+                  <p id="image-count-display" class="selected-count">이미지: 확인 중...</p>
+                </div>
+                
+                <input type="file" id="zip-input" name="zip_file" accept=".zip" hidden>
+              </div>
+
+              <!-- Footer Controls -->
+              <div class="upload-footer">
+                <!-- Left: Cost Estimation -->
+                <div class="footer-left">
+                  <div class="cost-box">
+                    <span class="cost-label">예상 소요 포인트</span>
+                    <span class="cost-value" id="estimated-cost">0 P</span>
+                  </div>
+                </div>
+
+                <!-- Right: Buttons -->
+                <div class="footer-right">
+                  <!-- 순서: 다른파일(Reset) | 탐색기(Browse) | 분석시작(Submit) -->
+                  
+                  <button type="button" id="btn-reset" class="btn-reset" disabled>
+                    다른 파일 선택
+                  </button>
+                  
+                  <button type="button" id="btn-browse-file" class="btn-browse">
+                    파일 탐색기 열기
+                  </button>
+                  
+                  <button type="submit" id="btn-analyze" class="btn-analyze" disabled>
+                    분석 시작하기
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <!-- Guide Section -->
+          <div class="guide-card mt-space">
+            <div class="guide-header">
+              <h3>올바른 IOLM 업로드 양식</h3>
+              <button type="button" class="btn-link" id="btn-open-vars-modal-loggedin">추출 변수 확인하기</button>
+            </div>
+            <div class="guide-content">
+              <p>각 이미지는 아래와 같이 <strong>양안(OD/OS) 정보가 모두 포함된</strong> 형태여야 합니다.</p>
+              <div class="example-grid">
+                <div class="ex-img good">
+                  <span class="badge success">권장</span>
+                  <img src="{% static 'iolm/example_iolm_good.png' %}" alt="올바른 예시" onerror="this.src='https://placehold.co/150x100/dcfce7/166534?text=OD+OS+Good'">
+                </div>
+                <div class="ex-img bad">
+                  <span class="badge error">불가</span>
+                  <img src="{% static 'iolm/example_iolm_bad.png' %}" alt="잘못된 예시" onerror="this.src='https://placehold.co/150x100/fee2e2/991b1b?text=Single+Eye+Bad'">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 오른쪽: 사이드바 -->
+        <aside class="upload-sidebar">
+          <!-- Collapsible Security Card -->
+          <div class="sidebar-card security-card" id="securityCard">
+            <div class="card-title-row" id="securityToggle">
+              <div class="title-left">
+                <span class="title-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </span>
+                <span class="security-text">데이터 보안 및 개인정보 보호</span>
+              </div>
+              <div class="chevron-icon">
+                <!-- Chevron Down -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </div>
+            </div>
+            
+            <!-- Collapsible Content -->
+            <div class="security-content-wrapper collapsed">
+              <div class="security-content-inner">
+                <ul class="security-list">
+                  <li>
+                    <strong>즉시 자동 폐기:</strong>
+                    Axialis는 업로드된 이미지를 영구 저장하지 않습니다. AI 분석 완료 즉시 영구 삭제됩니다.
+                  </li>
+                  <li>
+                    <strong>AI 학습 금지:</strong>
+                    OpenAI Enterprise API 정책을 준수하며, 귀하의 데이터는 모델 학습용으로 재사용되지 않습니다.
+                  </li>
+                  <li>
+                    <strong>암호화 전송:</strong>
+                    결과 데이터는 암호화된 채널을 통해서만 전송됩니다.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Info Card -->
+          <div class="sidebar-card info-card">
+            <div class="card-title">이용 안내</div>
+            <div class="info-content">
+              <p>• <strong>포인트 차감:</strong> 분석 시작 시 포인트가 차감됩니다.</p>
+              <p>• <strong>작업 확인:</strong> 업로드 후에는 <a href="{% url 'users:dashboard' %}">마이페이지</a>에서 진행 상황을 확인하세요.</p>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+      {% endif %}
+
+    </div>
+  </main>
+
+  <!-- Variables Modal (Schema Matched) -->
+  <div id="vars-modal" class="modal-backdrop hidden">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3>추출 변수 목록 (Schema)</h3>
+        <button class="modal-close" data-modal-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">다음의 변수들을 구조화된 JSON/Excel 형태로 추출합니다.</p>
+        
+        <div class="var-schema-box">
+          <h4>1. 환자 기본 정보 (Patient Info)</h4>
+          <div class="schema-tags">
+            <span>ptnt_name</span>
+            <span>ptnt_dob (생년월일)</span>
+            <span>ptnt_sex</span>
+            <span>ptnt_id (차트번호)</span>
+            <span>hospital</span>
+            <span>exam_date (검사일)</span>
+          </div>
+        </div>
+
+        <div class="var-schema-box">
+          <h4>2. 생체 계측 및 굴절력 (Biometry & IOL)</h4>
+          <p class="small-text">각 눈(Eye)에 대해 다음 항목을 추출합니다.</p>
+          <div class="schema-grid">
+            <div class="grid-col">
+              <strong>필수 항목 (Required)</strong>
+              <ul>
+                <li><code>eye</code>: OD / OS</li>
+                <li><code>AL</code>: Axial Length</li>
+                <li><code>ACD</code>: Anterior Chamber Depth</li>
+                <li><code>LT</code>: Lens Thickness</li>
+                <li><code>CCT</code>: Central Corneal Thickness</li>
+                <li><code>WTW</code>: White-to-White</li>
+                <li><code>LS / VS</code>: Lens / Vitreous Status</li>
+              </ul>
+            </div>
+            <div class="grid-col">
+              <strong>각막 곡률 (Keratometry)</strong>
+              <ul>
+                <li><code>K1 / K2</code>: Power (D)</li>
+                <li><code>K1_m / K2_m</code>: Axis (0~179)</li>
+                <li><code>TK1 / TK2</code>: Total K Power</li>
+                <li><code>TK1_m / TK2_m</code>: Total K Axis</li>
+                <li><code>missing_count</code>: 미인식 항목 수</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="var-schema-box">
+          <h4>3. 검증 데이터</h4>
+          <div class="schema-tags">
+            <span>wrong (0: 정상, 1: 눈 방향 오류 감지)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'iolm/js/upload.js' %}"></script>
+</body>
+</html>

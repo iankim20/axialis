@@ -15,11 +15,19 @@
         <a href="/" class="logo">Axialis</a>
       </div>
       <nav class="nav-right">
-        <a href="#" class="nav-link">IOLM 데이터 추출</a>
-        <a href="#" class="nav-link">Visual Field</a>
-        <a href="#" class="nav-link">Pentacam</a>
-        <a href="#" class="nav-link">마이페이지</a>
-        <a href="#" class="nav-link nav-login">로그인</a>
+        <!-- IOLM: 나중에 실제 업로드 페이지로 연결 예정 -->
+        <a href="{% url 'iolm:upload' %}" class="nav-link">IOLM 데이터 추출</a>
+
+        <!-- 아직 미구현 기능: 연하게 + hover 시 "기능 준비 중입니다" + 클릭 불가 -->
+        <a class="nav-link nav-link-disabled">Visual Field</a>
+        <a class="nav-link nav-link-disabled">Topo</a>
+
+        {% if user.is_authenticated %}
+          <a href="{% url 'users:dashboard' %}" class="nav-link">마이페이지</a>
+          <a href="{% url 'users:logout' %}" class="nav-link nav-link-logout">로그아웃</a>
+        {% else %}
+          <a href="{% url 'users:login' %}" class="nav-link nav-login">로그인</a>
+        {% endif %}
       </nav>
     </div>
   </header>
@@ -36,7 +44,7 @@
           수 시간이 걸리는 연구 데이터 정리를 수 분 안에 해결하세요!
         </p>
         <div class="hero-actions">
-          <a href="#" class="btn-primary">IOLM data 추출하기</a>
+          <a href="{% url 'iolm:upload' %}" class="btn-primary">IOLM data 추출하기</a>
         </div>
       </div>
 

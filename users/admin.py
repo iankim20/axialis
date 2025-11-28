@@ -18,10 +18,14 @@ class CustomUserAdmin(UserAdmin):
         "email",
         "is_staff",
         "is_active",
+        "created_at",  # 생성 시점 표시
     )
     list_filter = ("is_staff", "is_active")
     search_fields = ("username", "realname", "nickname", "kakao_id", "email")
     ordering = ("id",)
+
+    # created_at은 자동 생성 값이니까 읽기 전용으로
+    readonly_fields = ("created_at",)
 
     fieldsets = (
         (None, {"fields": ("username", "password")}),
@@ -52,7 +56,16 @@ class CustomUserAdmin(UserAdmin):
                 )
             },
         ),
-        ("Important dates", {"fields": ("last_login", "date_joined")}),
+        (
+            "Important dates",
+            {
+                "fields": (
+                    "last_login",
+                    "date_joined",
+                    "created_at",  # Axialis 최초 가입 시점
+                )
+            },
+        ),
     )
 
     add_fieldsets = (

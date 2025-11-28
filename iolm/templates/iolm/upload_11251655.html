@@ -1,0 +1,307 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Axialis - IOLM 데이터 추출</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'iolm/css/upload.css' %}">
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+</head>
+<body>
+  <!-- 공통 네비게이션 -->
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="{% url 'landing' %}" class="logo">Axialis</a>
+      </div>
+      <nav class="nav-right">
+        <a href="{% url 'iolm:upload' %}" class="nav-link nav-link-active">IOLM 데이터 추출</a>
+        <span class="nav-link nav-link-disabled">Visual Field</span>
+        <span class="nav-link nav-link-disabled">Topo</span>
+
+        {% if user.is_authenticated %}
+          <a href="{% url 'users:dashboard' %}" class="nav-link">마이페이지</a>
+          <a href="{% url 'users:logout' %}" class="nav-link nav-link-logout">로그아웃</a>
+        {% else %}
+          <a href="{% url 'users:login' %}" class="nav-link nav-login">로그인</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="page-inner">
+
+      {% if not user.is_authenticated %}
+      {% comment "logout state" %}
+      # =========================
+         비로그인: 설명 + 로그인 CTA
+         ========================= # 
+      {% endcomment %}
+      <section class="hero">
+        <div class="hero-text">
+          <p class="hero-kicker">연구용 IOLM 데이터 정리, 이제는 AI가 대신합니다</p>
+          <h1 class="hero-title">
+            IOLM 이미지를 ZIP 하나로 올리면<br>
+            수 분 안에 <span class="accent">엑셀 테이블</span>로 정리해 드립니다.
+          </h1>
+          <p class="hero-subtitle">
+            원하는 IOLM 검사들을 하나의 ZIP 파일로 묶어 업로드하면,<br>
+            Axialis의 IOLM 특화 AI가 각막·축장 데이터를 깔끔한 엑셀 행으로 변환합니다.
+          </p>
+
+          <ul class="hero-bullets">
+            <li>이미지 1장당 <strong>2 포인트</strong> 차감 ( <strong>1 포인트 = 100원</strong> )</li>
+            <li>IOLMaster 스타일 양안 이미지에 최적화된 인공지능 추출 파이프라인</li>
+            <li>연구자로서는 EMR에서 IOLM 이미지를 내려받아 ZIP으로 묶어 올리기만 하면 끝</li>
+          </ul>
+
+          <div class="hero-cta">
+            <p class="ai-text">
+              본 서비스는 IOLM 판독에 맞게 세밀하게 조정된 비전 모델과<br>
+              최신 언어 모델을 결합하여, 일반 OCR보다 <strong>더 빠르고 더 정확하게</strong> 데이터를 추출합니다.
+            </p>
+            <a href="{% url 'users:login' %}" id="loginButton" class="login-button">
+              3초 만에 로그인하여 AI 체험해보기
+            </a>
+            <div class="cursor-overlay">
+              <!-- 손가락 포인터 SVG -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="hover-cursor" height="50" width="50" viewBox="0 0 204 204">
+                <path d="M192.231,104.082V102c0-12.407-10.094-22.5-22.5-22.5c-2.802,0-5.484,0.519-7.961,1.459  
+                   C159.665,70.722,150.583,63,139.731,63c-2.947,0-5.76,0.575-8.341,1.61C128.667,55.162,119.624,48,109.231,48  
+                   c-2.798,0-5.496,0.541-8,1.516V22.5c0-12.407-10.094-22.5-22.5-22.5s-22.5,10.093-22.5,22.5v66.259  
+                   c-3.938-5.029-8.673-9.412-14.169-11.671c-6.133-2.52-12.587-2.219-18.667,0.872c-11.182,5.686-15.792,19.389-10.277,30.548  
+                   l27.95,56.563c0.79,1.552,19.731,38.008,54.023,38.008h40c31.54,0,57.199-25.794,57.199-57.506l-0.031-41.491H192.231z"
+                   fill="#000000"/>
+                <path d="M135.092,188.079h-40c-24.702,0-40.091-28.738-40.646-29.796l-27.88-56.42c-1.924-3.893-0.33-8.519,3.629-10.532  
+                   c2.182-1.11,4.081-1.223,6.158-0.372c8.281,3.395,16.41,19.756,19.586,29.265l2.41,7.259l12.883-4.559V22.5  
+                   c0-4.136,3.364-7.5,7.5-7.5s7.5,3.364,7.5,7.5V109h15V71c0-4.187,3.748-8,7.864-8c4.262,0,8,3.505,8,7.5v41.5h15V76
+                   c0-4.136,3.364-7.5,7.5-7.5s7.5,3.364,7.5,7.5V102v16.5h15V102c0-4.136,3.364-7.5,7.5-7.5s7.5,3.364,7.5,7.5v43.579
+                   C177.291,169.014,158.36,188.079,135.092,188.079z"
+                   fill="#ffffff"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="image-section">
+            <img src="{% static 'iolm/sample_iolm.png' %}" alt="IOLM 예시 이미지" class="sample-img">
+            <span class="arrow">➡</span>
+            <img src="{% static 'iolm/sample_result.png' %}" alt="엑셀 추출 결과 예시" class="sample-img">
+          </div>
+          <p class="hero-caption">
+            EMR에서 내려받은 IOLM 이미지를 ZIP으로 묶어 올리면,<br>눈(OD/OS) 기준의 엑셀 행으로 정리된 결과 파일을 제공합니다.
+          </p>
+        </div>
+      </section>
+
+      <!-- 개인정보/보안 안내 -->
+      <section class="card card-privacy">
+        <h2>데이터 보안 및 개인정보 보호</h2>
+        <p>
+          Axialis는 업로드된 IOLM 이미지를 <strong>분석에 필요한 기간 동안만 임시 보관</strong>하며,
+          AI 분석 파이프라인이 완료된 후에는 <strong>이미지 파일을 자동으로 삭제</strong>합니다.
+        </p>
+        <p>
+          분석 과정에서 사용하는 OpenAI 기반 비전 모델은 <strong>이미지 내용을 학습·재가공용으로 저장하지 않도록 설계</strong>된
+          엔드포인트를 이용합니다. 즉, 업로드된 IOLM 이미지는 모델 재학습이나 2차 활용에 사용되지 않습니다.
+        </p>
+        <p>
+          추출된 엑셀 데이터는 <strong>해당 사용자 계정에서만 다운로드</strong> 가능하도록 제공되며,
+          전송 및 저장 과정에서 <strong>암호화된 채널과 안전한 스토리지</strong>를 사용합니다.
+        </p>
+      </section>
+
+      <!-- 서비스 사용 방법 / 업로드 규칙 -->
+      <section class="card card-howto">
+        <h2>어떻게 사용하나요?</h2>
+        <ol class="steps">
+          <li>1️⃣ EMR 또는 PACS에서 IOLMaster 스타일의 <strong>IOLM 이미지를 일괄 다운로드</strong>합니다.</li>
+          <li>2️⃣ 각 환자·검사별 이미지를 하나의 폴더에 모은 뒤 <strong>ZIP으로 압축</strong>합니다.</li>
+          <li>3️⃣ 로그인 후 ZIP 파일을 업로드하면, 각 이미지에서 <strong>OD/OS별 2행씩</strong> 데이터를 추출합니다.</li>
+          <li>4️⃣ 생성된 엑셀/CSV 파일을 내려받아 통계 분석·연구에 바로 활용합니다.</li>
+        </ol>
+
+        <div class="upload-guidance">
+          <h3>올바른 IOLM 업로드 형식</h3>
+          <ul>
+            <li>각 이미지에는 <strong>양안 정보(OD/OS)</strong>가 함께 보이는 일반적인 IOLMaster 결과 화면이 포함되어야 합니다.</li>
+            <li>해상도는 너무 낮지 않게 (예: 가로 800px 이상) 저장된 이미지 권장입니다.</li>
+            <li>한 ZIP 안에는 <strong>동일한 포맷의 IOLM 이미지들만</strong> 넣어주세요.</li>
+          </ul>
+          <div class="example-images">
+            <img src="{% static 'iolm/example_iolm1.png' %}" alt="IOLM 업로드 예시 1" class="example-img">
+            <img src="{% static 'iolm/example_iolm2.png' %}" alt="IOLM 업로드 예시 2" class="example-img">
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-outline" id="btn-open-vars-modal">
+          추출되는 변수 확인하기
+        </button>
+      </section>
+
+      <!-- 비용 안내 -->
+      <section class="card card-cost">
+        <p>
+          AI 추출 시 <strong>이미지 1장당 2 포인트</strong>가 차감됩니다.<br>
+          <span class="small-note">(1 포인트 = 100원, 예: IOLM 100장 ZIP → 200 포인트 차감)</span>
+        </p>
+      </section>
+
+      <!-- 특별 이벤트 팝업 (스크롤 시 등장) -->
+      <div id="promoBox" class="promo hidden">
+        <button class="close-button" id="closePromo">&times;</button>
+        <h3 class="promo-title">
+          <span class="sparkles">🎉</span> 신규 가입 특별 이벤트 <span class="sparkles">🎉</span>
+        </h3>
+        <p class="promo-text">
+          지금 회원 가입하시면 <span class="promo-highlight">IOLM 추출 체험용 100 포인트</span>를 무료로 드립니다.
+        </p>
+        <div class="promo-footer">
+          <p>연구용 IOLM 데이터를 직접 업로드해 보고, AI 기반 워크플로우를 경험해 보세요.</p>
+        </div>
+      </div>
+
+      {% else %}
+      {% comment "login state" %}
+      # =========================
+         로그인 상태: ZIP 업로드 화면
+         ========================= #
+      {% endcomment %}
+      <section class="upload-hero">
+        <h1 class="hero-title-sm">
+          IOLM ZIP 업로드
+        </h1>
+        <p class="hero-subtitle">
+          IOLMaster 스타일 IOLM 이미지를 ZIP으로 올리면, 각 이미지에서 OD/OS 기준 2행씩 엑셀로 정리합니다.
+        </p>
+        <p class="hero-subtitle-small">
+          이미지 1장당 <strong>2 포인트</strong>가 차감됩니다 (1 포인트 = 100원).<br>
+          여러 장의 이미지를 업로드할 경우, 처리에는 다소 시간이 걸릴 수 있으며 진행 상황은 <strong>마이페이지 &gt; IOLM 작업 내역</strong>에서 확인할 수 있습니다.
+        </p>
+      </section>
+
+      <section class="upload-layout">
+        <!-- 왼쪽: ZIP 업로드 패널 -->
+        <div class="upload-panel">
+          <form id="zip-upload-form"
+                class="upload-form"
+                method="post"
+                enctype="multipart/form-data"
+                action="{% url 'iolm:upload_zip' %}"
+                data-max-size="314572800">
+            {% csrf_token %}
+
+            <div id="drop-area" class="drop-area">
+              <div class="drop-inner" id="drop-inner-default">
+                <div class="icon-circle">
+                  <span class="icon-zip">ZIP</span>
+                </div>
+                <p class="drop-title">IOLM ZIP 파일을 끌어다 놓거나 클릭하여 선택하세요</p>
+                <p class="drop-subtitle">
+                  한 번에 여러 이미지가 들어 있는 ZIP도 가능합니다.<br>
+                  <strong>파일 형식: .zip, 최대 용량: 300MB</strong>
+                </p>
+              </div>
+
+              <div class="file-info" id="file-info" hidden>
+                <p class="file-name" id="file-name"></p>
+                <p class="file-size" id="file-size"></p>
+              </div>
+
+              <input type="file"
+                     id="zip-input"
+                     name="zip_file"
+                     accept=".zip">
+            </div>
+
+            <div class="button-row">
+              <button type="button" class="btn btn-outline" id="btn-select-file">파일 선택</button>
+              <div class="button-row-right">
+                <button type="button" class="btn btn-ghost" id="btn-reset">초기화</button>
+                <button type="submit" class="btn btn-primary" id="btn-upload" disabled>업로드 시작</button>
+              </div>
+            </div>
+
+            <p class="upload-note">
+              • ZIP 용량은 <strong>300MB 미만</strong>만 업로드할 수 있습니다.<br>
+              • 업로드 후에는 백그라운드에서 AI 추출이 진행되며, 완료된 작업은 <strong>마이페이지 &gt; IOLM 작업 내역</strong>에서
+              결과 엑셀 파일을 내려받을 수 있습니다.
+            </p>
+          </form>
+        </div>
+
+        <!-- 오른쪽: 가이드 / 설명 -->
+        <aside class="guide-panel">
+          <div class="card card-privacy small">
+            <h2>데이터 처리 원칙</h2>
+            <ul class="guide-list">
+              <li>업로드된 IOLM 이미지는 분석 파이프라인 완료 후 자동 삭제됩니다.</li>
+              <li>OpenAI 비전 모델은 모델 학습용으로 이미지를 저장하지 않는 엔드포인트를 사용합니다.</li>
+              <li>추출된 엑셀 데이터는 사용자 계정으로만 접근 가능하며, 암호화된 스토리지에서 관리됩니다.</li>
+            </ul>
+          </div>
+
+          <div class="card card-howto small">
+            <h2>권장 워크플로우</h2>
+            <ol class="steps">
+              <li>EMR/PACS에서 IOLM 이미지를 날짜·환자 기준으로 일괄 다운로드</li>
+              <li>폴더 단위로 모은 뒤 하나의 ZIP 파일로 압축</li>
+              <li>Axialis에서 ZIP 업로드 → 자동 추출</li>
+              <li>완성된 엑셀을 통계 소프트웨어(R, Python, SPSS 등)에 바로 Import</li>
+            </ol>
+          </div>
+
+          <button type="button" class="btn btn-outline full-width" id="btn-open-vars-modal-loggedin">
+            추출되는 변수 확인하기
+          </button>
+        </aside>
+      </section>
+
+      {% endif %}
+    </div>
+  </main>
+
+  <!-- 추출 변수 안내 모달 -->
+  <div id="vars-modal" class="modal hidden" aria-hidden="true">
+    <div class="modal-dialog">
+      <button class="modal-close" data-modal-close>&times;</button>
+      <h2>Axialis에서 추출하는 주요 변수</h2>
+      <p class="modal-lead">
+        IOLMaster 계열 기기에서 공통적으로 제공되는 핵심 지표들을 중심으로 자동 추출합니다.
+      </p>
+      <div class="modal-columns">
+        <ul>
+          <li>검사 ID (익명화된 내부 식별자)</li>
+          <li>검사일 / 검사 시간</li>
+          <li>눈 구분 (OD / OS)</li>
+          <li>Axial Length (AL)</li>
+          <li>Anterior Chamber Depth (ACD)</li>
+          <li>Lens Thickness (LT)</li>
+          <li>Central Corneal Thickness (CCT, 옵션)</li>
+        </ul>
+        <ul>
+          <li>K1 / K2, 평균 K</li>
+          <li>Total Keratometry (TK)* 지원 기기에서</li>
+          <li>White-to-White (WTW)</li>
+          <li>SNR / Signal Quality (가능한 경우)</li>
+          <li>Target Refraction / IOL Power (옵션)</li>
+          <li>기타 연구 목적에 맞게 확장 가능한 부가 지표</li>
+        </ul>
+      </div>
+      <p class="modal-footnote">
+        실제 추출 변수 구성은 기기 종류와 버전에 따라 일부 달라질 수 있으며,<br>
+        필요 시 사용자 요청에 따라 커스터마이징이 가능합니다.
+      </p>
+    </div>
+  </div>
+
+  <!-- 로딩 스피너 컨테이너 (JS에서 동적으로 삽입) -->
+
+  <script src="{% static 'iolm/js/upload.js' %}"></script>
+</body>
+</html>

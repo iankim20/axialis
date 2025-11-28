@@ -31,6 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ca1xdj3cw(+mb=w#=+v58$s(kj!wberm21!4qasr9%v_)ad^w2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+## 추후에는 DEBUG FALSE로 바꿔야 함 ****
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     "users",
     "iolm",
     "billing",
+    # "storages",
 ]
 
 MIDDLEWARE = [
@@ -118,7 +120,12 @@ KAKAO_REDIRECT_URI = 'http://127.0.0.1:8000/users/kakao/callback/'
 KAKAO_LOGOUT_REDIRECT_URI = 'http://127.0.0.1:8000/users/logout_complete/'
 # KAKAO_LOGOUT_REDIRECT_URI = 'https://axialis.ai/users/logout_complete/'
 
-LOGIN_URL = '/users/login/' 
+# Kakao host 상수
+KAKAO_AUTH_HOST = "https://kauth.kakao.com"
+KAKAO_API_HOST = "https://kapi.kakao.com"
+
+LOGIN_URL = '/users/login/'
+LOGIN_REDIRECT_URL = '/users/dashboard/'
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -146,7 +153,84 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+
+
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# settings.py 맨 아래나 관련 섹션에 추가
+IOLM_MAX_UPLOAD_BYTES = 300 * 1024 * 1024  # 200MB
+
+
+### storage-related
+
+
+### later, when integrating S3
+# DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+# AWS_ACCESS_KEY_ID = "..."
+# AWS_SECRET_ACCESS_KEY = "..."
+# AWS_STORAGE_BUCKET_NAME = "axialis-iolm"
+# AWS_S3_REGION_NAME = "ap-northeast-2"  # 서울 리전이면 예시
+
+# AWS_S3_SIGNATURE_VERSION = "s3v4"
+# AWS_S3_ADDRESSING_STYLE = "virtual"
+
+# AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+
+# MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+
+
+
+# Celery 기본 설정
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/1"  # (선택) 결과 저장
+
+# 타임존/언어에 맞게
+CELERY_TIMEZONE = "Asia/Seoul"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 60 * 90  # 30분 타임아웃 예시
+
+LOG_DIR = BASE_DIR / "logs"
+LOG_DIR.mkdir(exist_ok=True)
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "celery": {
+            "format": (
+                "[{asctime}] [{levelname}] "
+                "[{processName}:{process}] "
+                "{name} {message}"
+            ),
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "celery_console": {
+            "class": "logging.StreamHandler",
+            "formatter": "celery",
+        },
+        "celery_file": {
+            "class": "logging.FileHandler",
+            "filename": str(LOG_DIR / "celery.log"),
+            "formatter": "celery",
+        },
+    },
+    "loggers": {
+        # iolm.tasks 안에서 logging.getLogger(__name__) 사용
+        "iolm.tasks": {
+            "handlers": ["celery_console", "celery_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
