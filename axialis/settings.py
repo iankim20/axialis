@@ -17,25 +17,29 @@ from dotenv import load_dotenv
 from django.utils.timezone import activate
 import dj_database_url
 
-load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 KAKAO_REST_API_KEY = os.getenv("KAKAO_REST_API_KEY")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv()
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ca1xdj3cw(+mb=w#=+v58$s(kj!wberm21!4qasr9%v_)ad^w2'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-secret-only-local")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 ## 추후에는 DEBUG FALSE로 바꿔야 함 ****
-DEBUG = True
+DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
+
+CSRF_TRUSTED_ORIGINS = [
+    origin for origin in os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if origin
+]
 
 AUTH_USER_MODEL = "users.CustomUser"
 
@@ -162,6 +166,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+STATIC_ROOT = BASE_DIR / "staticfiles"  # 나중에 collectstatic용
 
 
 
@@ -210,8 +215,26 @@ else:
 
 
 # Celery 기본 설정
-CELERY_BROKER_URL = "redis://localhost:6379/0"
-CELERY_RESULT_BACKEND = "redis://localhost:6379/1"  # (선택) 결과 저장
+REDIS_HOST = os.getenv("REDIS_HOST", "127.0.0.1")
+REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+REDIS_DB_BROKER = os.getenv("REDIS_DB_BROKER", "0")
+REDIS_DB_RESULT = os.getenv("REDIS_DB_RESULT", "1")
+
+CELERY_BROKER_URL = os.getenv(
+    "CELERY_BROKER_URL",
+    os.getenv(
+        "REDIS_URL",  # 예: redis://localhost:6379/0 또는 rediss://...
+        f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB_BROKER}",
+    ),
+)
+
+CELERY_RESULT_BACKEND = os.getenv(
+    "CELERY_RESULT_BACKEND",
+    os.getenv(
+        "REDIS_RESULT_URL",
+        f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB_RESULT}",
+    ),
+)
 
 # 타임존/언어에 맞게
 CELERY_TIMEZONE = "Asia/Seoul"
