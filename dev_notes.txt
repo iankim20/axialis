@@ -1,0 +1,15 @@
+# 1) WSL 터미널
+cd ~/projects/Axialis/axialis
+source .venv/bin/activate
+
+# 2) Postgres (서비스로 돌리면 생략 가능)
+sudo service postgresql start
+
+# 3) Redis
+redis-server
+
+# 4) 새 탭: Celery (queue 이름은 따로 정하지 않음)
+celery -A axialis worker -l info --concurrency=8
+
+# 5) 또 다른 탭: Django
+python manage.py runserver 

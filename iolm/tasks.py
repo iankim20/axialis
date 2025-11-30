@@ -104,16 +104,19 @@ def run_ocr_for_image(image_path: str) -> Tuple[List[Dict[str, Any]], Dict[str, 
 
 
 
-def _extract_zip_images(zip_path: str, tmpdir: str) -> List[str]:
+def _extract_zip_images(zip_file_field, tmpdir: str) -> List[str]:
     """
-    ZIP 파일에서 이미지 확장자(IMAGE_EXTENSIONS)에 해당하는 파일만
+    ZIP FileField에서 이미지 확장자(IMAGE_EXTENSIONS)에 해당하는 파일만
     tmpdir 아래로 풀어서, 풀린 이미지 파일 경로 리스트를 반환한다.
+
+    - S3 / 로컬 상관없이 zip_file_field.open(\"rb\") 로 읽어서 BytesIO로 감싼 뒤 ZipFile 사용
+    - zip_file_field.path 에 의존하지 않으므로, DEFAULT_FILE_STORAGE 가 S3여도 안전
     """
     tmpdir_path = Path(tmpdir)
     image_paths: List[str] = []
 
-    # 1) ZIP을 전체 바이트로 읽어서 BytesIO로 감싸기
-    with open(zip_path, "rb") as f:
+    # 1) storage-agnostic하게 ZIP 전체 바이트 읽기
+    with zip_file_field.open("rb") as f:
         zip_bytes = f.read()
 
     with ZipFile(io.BytesIO(zip_bytes)) as zf:
@@ -131,7 +134,6 @@ def _extract_zip_images(zip_path: str, tmpdir: str) -> List[str]:
 
         # 2) 선택된 이미지 파일만 tmpdir에 추출
         for name in image_names:
-            # 하위 디렉토리 구조가 있으면 만들어 주기
             dest_path = tmpdir_path / name
             dest_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -141,7 +143,6 @@ def _extract_zip_images(zip_path: str, tmpdir: str) -> List[str]:
             image_paths.append(str(dest_path))
 
     return image_paths
-
 
 
 def _build_usage_aggregator() -> Dict[str, Any]:
@@ -202,7 +203,8 @@ def process_upload_job(self, job_id: int) -> None:
 
     try:
         with TemporaryDirectory() as tmpdir:
-            image_paths = _extract_zip_images(job.zip_file.path, tmpdir)
+            # ⬇️ S3/로컬 모두 동작하도록 FileField 자체를 넘김
+            image_paths = _extract_zip_images(job.zip_file, tmpdir)
             total_images = len(image_paths)
 
             # DB에 총 이미지 수 업데이트
@@ -232,7 +234,7 @@ def process_upload_job(self, job_id: int) -> None:
 
                 _update_usage(usage_summary, filename, image_usage, eye_count)
 
-                # 진행률 업데이트 (race condition 줄이려고 update 사용)
+                # 진행률 업데이트
                 job.processed_images = idx
                 job.num_eyes = total_eyes
                 UploadJob.objects.filter(pk=job.id).update(
@@ -250,7 +252,7 @@ def process_upload_job(self, job_id: int) -> None:
 
         # 결과 파일 저장 및 최종 상태 업데이트
         job.result_file.save(excel_filename, ContentFile(excel_bytes), save=False)
-        
+
         job.status = UploadJob.Status.COMPLETED
         job.completed_at = timezone.now()
         job.usage_summary = usage_summary
@@ -279,7 +281,9 @@ def process_upload_job(self, job_id: int) -> None:
         )
 
     except Exception as exc:  # noqa: BLE001
-        logger.exception("ERROR job=%s task=%s pid=%s: %s", job.id, task_id, os.getpid(), exc)
+        logger.exception(
+            "ERROR job=%s task=%s pid=%s: %s", job.id, task_id, os.getpid(), exc
+        )
         job.status = UploadJob.Status.FAILED
         job.error_message = str(exc)
         job.completed_at = timezone.now()
@@ -295,9 +299,11 @@ def process_upload_job(self, job_id: int) -> None:
         raise
 
 
-def build_excel_in_memory(rows: List[Dict[str, Any]], job: UploadJob) -> Tuple[bytes, str]:
-    import io
 
+def build_excel_in_memory(
+    rows: List[Dict[str, Any]],
+    job: UploadJob,
+) -> Tuple[bytes, str]:
     from openpyxl import Workbook
 
     wb = Workbook()
@@ -333,178 +339,3 @@ def build_excel_in_memory(rows: List[Dict[str, Any]], job: UploadJob) -> Tuple[b
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-# @shared_task
-# def process_upload_job(job_id: int) -> None:
-#     """
-#     하나의 UploadJob에 대해:
-#     - ZIP 안의 이미지 전부 꺼내서
-#     - 각 이미지마다 OpenAI OCR 수행
-#     - OD/OS 2개 row로 엑셀 DataFrame 구성
-#     - result_file 저장 + usage_summary 채우기
-#     """
-#     try:
-#         job = UploadJob.objects.get(pk=job_id)
-#     except UploadJob.DoesNotExist:
-#         # job 이 이미 지워졌다면 그냥 종료
-#         return
-
-#     # 상태 업데이트
-#     job.status = UploadJob.Status.PROCESSING
-#     job.error_message = ""
-#     job.save(update_fields=["status", "error_message", "updated_at"])
-
-#     rows: List[Dict[str, Any]] = []
-#     usage_by_image: List[Dict[str, Any]] = []
-
-#     try:
-#         # 1) ZIP 파일 전체를 메모리로 읽기
-#         field_file = job.zip_file
-#         with field_file.open("rb") as f:
-#             zip_bytes = f.read()
-
-#         with ZipFile(io.BytesIO(zip_bytes)) as zf, tempfile.TemporaryDirectory() as tmpdir:
-#             tmpdir_path = Path(tmpdir)
-
-#             image_names = [
-#                 name
-#                 for name in zf.namelist()
-#                 if (
-#                     not name.endswith("/")  # 디렉토리 제외
-#                     and Path(name).suffix.lower() in IMAGE_EXTENSIONS
-#                 )
-#             ]
-
-#             image_names.sort()
-
-#             for name in image_names:
-#                 # ZIP 내부에서 파일 꺼내 임시 파일로 저장
-#                 with zf.open(name) as img_file:
-#                     img_data = img_file.read()
-
-#                 tmp_image_path = tmpdir_path / Path(name).name
-#                 tmp_image_path.parent.mkdir(parents=True, exist_ok=True)
-#                 tmp_image_path.write_bytes(img_data)
-
-#                 # 2) 한 장에 대해 IOLM OCR 수행
-#                 res = process_iolm_image(tmp_image_path)
-
-#                 ptnt = res["ptnt_info"]           # dict
-#                 od_obj = res["od"]               # dict
-#                 os_obj = res["os"]               # dict
-#                 usage = res["usage"]             # dict: ptnt/od/os
-#                 timing = res["timing"]
-
-#                 # measurements 배열에서 첫 원소 꺼내기
-#                 od_meas = od_obj["measurements"][0]
-#                 os_meas = os_obj["measurements"][0]
-
-#                 common = {
-#                     "source_image": name,
-#                     "ptnt_name": ptnt.get("ptnt_name", ""),
-#                     "ptnt_dob": ptnt.get("ptnt_dob", ""),
-#                     "ptnt_sex": ptnt.get("ptnt_sex", ""),
-#                     "ptnt_id": ptnt.get("ptnt_id", ""),
-#                     "hospital": ptnt.get("hospital", ""),
-#                     "exam_date": ptnt.get("exam_date", ""),
-#                 }
-
-#                 def build_row(eye_data: Dict[str, Any]) -> Dict[str, Any]:
-#                     return {
-#                         **common,
-#                         "eye": eye_data.get("eye", ""),
-#                         "LS": eye_data.get("LS", ""),
-#                         "VS": eye_data.get("VS", ""),
-#                         "LVC": eye_data.get("LVC", ""),
-#                         "AL": eye_data.get("AL", 0.0),
-#                         "ACD": eye_data.get("ACD", 0.0),
-#                         "LT": eye_data.get("LT", 0.0),
-#                         "CCT": eye_data.get("CCT", 0),
-#                         "WTW": eye_data.get("WTW", 0.0),
-#                         "K1": eye_data.get("K1", 0.0),
-#                         "K1_m": eye_data.get("K1_m", 0),
-#                         "K2": eye_data.get("K2", 0.0),
-#                         "K2_m": eye_data.get("K2_m", 0),
-#                         "TK1": eye_data.get("TK1", 0.0),
-#                         "TK1_m": eye_data.get("TK1_m", 0),
-#                         "TK2": eye_data.get("TK2", 0.0),
-#                         "TK2_m": eye_data.get("TK2_m", 0),
-#                         "missing_count": eye_data.get("missing_count", 0),
-#                     }
-
-#                 rows.append(build_row(od_meas))
-#                 rows.append(build_row(os_meas))
-
-#                 usage_by_image.append(
-#                     {
-#                         "image": name,
-#                         "usage": usage,
-#                         "timing": timing,
-#                     }
-#                 )
-
-#         # 3) DataFrame → 엑셀 메모리 파일로 만들기
-#         if rows:
-#             df = pd.DataFrame(rows)
-
-#             buffer = io.BytesIO()
-#             with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
-#                 df.to_excel(writer, index=False, sheet_name="IOLM")
-
-#             buffer.seek(0)
-
-#             # 결과 파일 이름: filename_display 규칙을 따르되, 아직 completed_at 없으므로 대략적으로
-#             now = timezone.now()
-#             ts = now.strftime("%Y-%m-%d %H-%M")
-#             filename = f"{ts}_{len(rows)}rows_output.xlsx"
-
-#             job.result_file.save(filename, ContentFile(buffer.read()), save=False)
-#         else:
-#             # 이미지가 하나도 없으면 에러 처리
-#             job.error_message = "ZIP 파일 내에서 유효한 이미지(.png/.jpg/.tif 등)를 찾지 못했습니다."
-#             job.status = UploadJob.Status.FAILED
-#             job.save(update_fields=["status", "error_message", "updated_at"])
-#             return
-
-#         # 4) usage 요약 계산 (간단 예: 총 이미지, 총 아이 수만)
-#         total_images = len(usage_by_image)
-#         total_eyes = len(rows)
-#         # 비용 합산은 usage 안의 total_cost_usd 를 합치는 방식으로 구현 가능
-#         total_cost = 0.0
-#         for u in usage_by_image:
-#             for part in ("ptnt", "od", "os"):
-#                 part_usage = u["usage"].get(part) or {}
-#                 cost = part_usage.get("total_cost_usd")
-#                 if isinstance(cost, (int, float)):
-#                     total_cost += float(cost)
-
-#         job.num_images = total_images
-#         job.num_eyes = total_eyes
-#         job.completed_at = timezone.now()
-#         job.status = UploadJob.Status.COMPLETED
-#         job.usage_summary = {
-#             "total_images": total_images,
-#             "total_eyes": total_eyes,
-#             "total_openai_cost_usd": round(total_cost, 6),
-#             "by_image": usage_by_image,
-#         }
-
-#         job.save()
-
-#     except Exception as exc:
-#         # 실패 시 상태/에러만 기록
-#         job.status = UploadJob.Status.FAILED
-#         job.error_message = str(exc)
-#         job.save(update_fields=["status", "error_message", "updated_at"])

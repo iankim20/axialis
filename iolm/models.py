@@ -1,10 +1,30 @@
 from __future__ import annotations
-
+import os
 from datetime import timedelta
 
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+
+def iolm_zip_upload_to(instance: "UploadJob", filename: str) -> str:
+    """
+    per-user 경로로 ZIP 저장:
+    iolm/zips/user_<user_id>/<basename>
+    """
+    base = os.path.basename(filename)
+    user_part = f"user_{instance.user_id}" if instance.user_id else "anonymous"
+    return f"iolm/zips/{user_part}/{base}"
+
+
+def iolm_result_upload_to(instance: "UploadJob", filename: str) -> str:
+    """
+    per-user 경로로 결과 엑셀 저장:
+    iolm/results/user_<user_id>/<basename>
+    """
+    base = os.path.basename(filename)
+    user_part = f"user_{instance.user_id}" if instance.user_id else "anonymous"
+    return f"iolm/results/{user_part}/{base}"
+
 
 
 class UploadJob(models.Model):
@@ -21,14 +41,14 @@ class UploadJob(models.Model):
     )
 
     zip_file = models.FileField(
-        upload_to="iolm/zips/",
+        upload_to=iolm_zip_upload_to,
         help_text="사용자가 업로드한 원본 ZIP 파일",
     )
     result_file = models.FileField(
-        upload_to="iolm/results/",
+        upload_to=iolm_result_upload_to,
         blank=True,
         null=True,
-        help_text="AI 추출 후 생성된 엑셀/CSV 파일",
+        help_text="AI 추출 후 생성된 엑셀 파일",
     )
 
     original_filename = models.CharField(max_length=255)

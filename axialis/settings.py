@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     "users",
     "iolm",
     "billing",
-    # "storages",
+    "storages",
 ]
 
 MIDDLEWARE = [
@@ -162,9 +162,6 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
-
 
 
 
@@ -180,20 +177,35 @@ IOLM_MAX_UPLOAD_BYTES = 300 * 1024 * 1024  # 200MB
 
 ### storage-related
 
-### later, when integrating S3
-# DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+USE_S3_MEDIA = os.getenv("USE_S3_MEDIA") == "1"
 
-# AWS_ACCESS_KEY_ID = "..."
-# AWS_SECRET_ACCESS_KEY = "..."
-# AWS_STORAGE_BUCKET_NAME = "axialis-iolm"
-# AWS_S3_REGION_NAME = "ap-northeast-2"  # 서울 리전이면 예시
+if USE_S3_MEDIA:
+    # S3 기반 media 저장소
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+    AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "ap-northeast-2")
 
-# AWS_S3_SIGNATURE_VERSION = "s3v4"
-# AWS_S3_ADDRESSING_STYLE = "virtual"
+    AWS_DEFAULT_ACL = "private"          # 객체 전부 private
+    AWS_S3_FILE_OVERWRITE = False        # 같은 이름이면 새로운 키 사용 (추천)
+    AWS_S3_ENCRYPTION = True             # SSE-S3 (AES256) 암호화
+    AWS_S3_ADDRESSING_STYLE = "virtual"  # 기본값, 보통 그대로 둠:contentReference[oaicite:1]{index=1}
 
-# AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    # 필요하면 캐시 헤더 등도 추가 가능
+    AWS_S3_OBJECT_PARAMETERS = {
+        "CacheControl": "max-age=86400",
+    }
 
-# MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+    # MEDIA_URL 은 굳이 직접 안 써도 되지만, 참고로:
+    MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/"
+    MEDIA_ROOT = None   # S3 사용 시 로컬 media 폴더는 의미 없음
+else:
+    # 지금까지 쓰던 로컬 media
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = BASE_DIR / "media"
+
 
 
 
