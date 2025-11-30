@@ -15,6 +15,7 @@ import sys
 import os
 from dotenv import load_dotenv
 from django.utils.timezone import activate
+import dj_database_url
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -88,20 +89,21 @@ WSGI_APPLICATION = 'axialis.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-# import dj_database_url
 # DATABASES = {
-#     "default": dj_database_url.parse(
-#         os.environ.get("DATABASE_URL"),  # Render Postgres URL
-#         conn_max_age=600,
-#     )
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
 # }
+
+default_db_url = f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+
+DATABASES = {
+    "default": dj_database_url.config(
+        default=default_db_url,  # DATABASE_URL 없으면 SQLite로
+        conn_max_age=600,
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

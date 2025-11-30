@@ -1,0 +1,2434 @@
+[
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "admin",
+    "model": "logentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "auth",
+    "model": "permission"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "auth",
+    "model": "group"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "contenttypes",
+    "model": "contenttype"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "sessions",
+    "model": "session"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "users",
+    "model": "customuser"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "iolm",
+    "model": "uploadjob"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "66bl6ka4pijxzr5ykudwi1lx8qtiqpxb",
+  "fields": {
+    "session_data": "eyJrYWthb19vYXV0aF9zdGF0ZSI6IjgyWlVfakhFOS1EZm53UUV1dldZU2cifQ:1vNKRC:j7InFxCuYf1cf530ZOOl2YNIcKuW_Or5tbXlOkoxoL8",
+    "expire_date": "2025-12-08T00:28:14.691Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "6ureizhxi6tfgq82w8pw2a12fvake0bx",
+  "fields": {
+    "session_data": ".eJxVjEEOgjAQRe_StWmGYQaKS_ecoZl2qqCmTSisjHdXEha6_e-9_zJetnXyW02Ln9WcDZrT7xYkPlLegd4l34qNJa_LHOyu2INWOxZNz8vh_h1MUqdv3QCgOOA-uJZw6OmqLUiLotxAFxpGHCSKS0LKhEgdEweXaADlFHvz_gCt7TbK:1vOlL5:qCJ15R0EqcdJOVJxpxOHbMJB1x3gzLy5iUsetLm60tQ",
+    "expire_date": "2025-12-11T23:23:51.383Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "80jik9omfhp7efl2xbxu8dnsszxsss5b",
+  "fields": {
+    "session_data": ".eJxVTctugzAQ_BefG2SwMWxupVKTliRVHlK5WbvGAUKKIwyHqOq_F6RcMqfRPH9Ziy06jcZY7_XgWtuxJSt2n4fFrV6IPoxvPxU_yE2jVVIdP1b7PsvXrzP2bveebyeywvs3vNG1GHP6ouLUFOyFaRyHWo_e9ropp0nxrBGa6Wo2ygt2lQuM64a-oWCOBA_XB1tX2mv2yD4N1Ojrqc2VpNBYTCk5CxUBobUS0UQGAFJArkJIYyrTRIASScgVchDxLMnoLCX7-wcKZFPG:1vOtDK:w-tXhTr7KMmIBTDKTL70dCsGyfklILMDRi2Pg-QAoDs",
+    "expire_date": "2025-12-12T07:48:22.949Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "izh5581q07lxnumakqxkyy2mrfr3621d",
+  "fields": {
+    "session_data": ".eJxVjEEOgjAQRe_StWmGYQaKS_ecoZl2qqCmTSisjHdXEha6_e-9_zJetnXyW02Ln9WcDZrT7xYkPlLegd4l34qNJa_LHOyu2INWOxZNz8vh_h1MUqdv3QCgOOA-uJZw6OmqLUiLotxAFxpGHCSKS0LKhEgdEweXaADlFHvz_gCt7TbK:1vOp4q:mPuzBahJMqepDENU6-_wRc6Gq1gYjnvlIexZiJlG07A",
+    "expire_date": "2025-12-12T03:23:20.883Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "kl97d1ss6nhtc8g0hqpwpobqxa50wj1e",
+  "fields": {
+    "session_data": ".eJxVjEEOgjAQRe_StWmGYQaKS_ecoZl2qqCmTSisjHdXEha6_e-9_zJetnXyW02Ln9WcDZrT7xYkPlLegd4l34qNJa_LHOyu2INWOxZNz8vh_h1MUqdv3QCgOOA-uJZw6OmqLUiLotxAFxpGHCSKS0LKhEgdEweXaADlFHvz_gCt7TbK:1vOoyg:YZ9U1a71SeQ9XabfpIcCY0DAKSIgefaPuK8djlTKSs4",
+    "expire_date": "2025-12-12T03:16:58.439Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "n4cnov6slj5umtny8zfhw4t2w02yiefw",
+  "fields": {
+    "session_data": ".eJxVjEEOgjAQRe_StWmGYQaKS_ecoZl2qqCmTSisjHdXEha6_e-9_zJetnXyW02Ln9WcDZrT7xYkPlLegd4l34qNJa_LHOyu2INWOxZNz8vh_h1MUqdv3QCgOOA-uJZw6OmqLUiLotxAFxpGHCSKS0LKhEgdEweXaADlFHvz_gCt7TbK:1vOczu:Rv5clPETj5gU8Rlg9KfYkAWtqw8XURVE6hPfaYNepnw",
+    "expire_date": "2025-12-11T14:29:26.708Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ofdwgkg8obd2kupu8lmwcb89sj0ua0dy",
+  "fields": {
+    "session_data": ".eJxVjEEOgjAQRe_StWmGYQaKS_ecoZl2qqCmTSisjHdXEha6_e-9_zJetnXyW02Ln9WcDZrT7xYkPlLegd4l34qNJa_LHOyu2INWOxZNz8vh_h1MUqdv3QCgOOA-uJZw6OmqLUiLotxAFxpGHCSKS0LKhEgdEweXaADlFHvz_gCt7TbK:1vNuaS:QZYfYb-i5bq4S2lVkqBHk_GlU8b6sKJyL5wJr8ACn1k",
+    "expire_date": "2025-12-09T15:04:12.519Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "p0p1tcmco1ye92suwv8l3k24rqh5gd4h",
+  "fields": {
+    "session_data": ".eJxVjEEOgjAQRe_StWmGYQaKS_ecoZl2qqCmTSisjHdXEha6_e-9_zJetnXyW02Ln9WcDZrT7xYkPlLegd4l34qNJa_LHOyu2INWOxZNz8vh_h1MUqdv3QCgOOA-uJZw6OmqLUiLotxAFxpGHCSKS0LKhEgdEweXaADlFHvz_gCt7TbK:1vNvhp:pwB1e5u0YUbLNS_9V3Hej7DeZXiz6IOuCE9r2rnyNhQ",
+    "expire_date": "2025-12-09T16:15:53.916Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "y0tv8rzm6mkgjv24fcnibdjhmhh2tenk",
+  "fields": {
+    "session_data": ".eJxVTbtOwzAU_RfPEMWxY_uygRAd0tKCIhR1se51XJIaYqmOB4T4dxKpS890dJ6_LGDAaNE5n5KdY_ATe2AHSU3TtlTDFpojf6_DebOddVDfu3y_P-THFW_x9fnDLGSDPy-DTrzLDe2pa8eO3TGLeR5sTv5ix36ZFLcaoVuuVqM_4_QZCxen-TJSsUaKq5uKXez919M1ezMwYBqWdqkkcefRkD4JVQGh9xLRVQ4ADGCpOJiaeqMFKKF5qbAEUa-SrE5Ssr9_BQBTwA:1vOoSf:GDc8lYvg5Ctz94Y4xbp-UK5leFbUHr5X1quCyxJ_vzQ",
+    "expire_date": "2025-12-12T02:43:53.341Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "yinj4arqwk6z9z4doigntw2azjyl2snr",
+  "fields": {
+    "session_data": ".eJxVjEEOgjAQRe_StWmGYQaKS_ecoZl2qqCmTSisjHdXEha6_e-9_zJetnXyW02Ln9WcDZrT7xYkPlLegd4l34qNJa_LHOyu2INWOxZNz8vh_h1MUqdv3QCgOOA-uJZw6OmqLUiLotxAFxpGHCSKS0LKhEgdEweXaADlFHvz_gCt7TbK:1vOV66:nNdFfSP8aPswgjswlZ17eqiOYCDJtXC-ssuPwsr_1Mk",
+    "expire_date": "2025-12-11T06:03:18.824Z"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "view_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "view_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "view_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "view_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "view_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add user",
+    "content_type": [
+      "users",
+      "customuser"
+    ],
+    "codename": "add_customuser"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change user",
+    "content_type": [
+      "users",
+      "customuser"
+    ],
+    "codename": "change_customuser"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete user",
+    "content_type": [
+      "users",
+      "customuser"
+    ],
+    "codename": "delete_customuser"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view user",
+    "content_type": [
+      "users",
+      "customuser"
+    ],
+    "codename": "view_customuser"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add upload job",
+    "content_type": [
+      "iolm",
+      "uploadjob"
+    ],
+    "codename": "add_uploadjob"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change upload job",
+    "content_type": [
+      "iolm",
+      "uploadjob"
+    ],
+    "codename": "change_uploadjob"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete upload job",
+    "content_type": [
+      "iolm",
+      "uploadjob"
+    ],
+    "codename": "delete_uploadjob"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view upload job",
+    "content_type": [
+      "iolm",
+      "uploadjob"
+    ],
+    "codename": "view_uploadjob"
+  }
+},
+{
+  "model": "users.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$6Eu5SVVgOBGjtGbZHiV2xA$x6f7IMh8c2AoqcBtZTqKJpML5Dbly9JKy+9+SU1+5io=",
+    "last_login": "2025-11-28T07:47:42.077Z",
+    "is_superuser": true,
+    "username": "ytkim1",
+    "first_name": "",
+    "last_name": "",
+    "email": "iankim20@naver.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-11-23T14:52:33.812Z",
+    "kakao_id": null,
+    "realname": null,
+    "profile_image": null,
+    "profile_image_thumbnail": null,
+    "is_default_image": null,
+    "created_at": "2025-11-23T14:52:33.813Z",
+    "nickname": "",
+    "nickname_change_date": null,
+    "coins": 0,
+    "hospital_name": null,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.customuser",
+  "fields": {
+    "password": "",
+    "last_login": "2025-11-28T07:48:22.944Z",
+    "is_superuser": false,
+    "username": "kakao_3892265416",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-11-23T15:24:42.595Z",
+    "kakao_id": "3892265416",
+    "realname": "김이탁",
+    "profile_image": "http://k.kakaocdn.net/dn/crCNHk/btqFQAuMn4e/sg68Qq8EZUaEh3QE4QsQj0/img_640x640.jpg",
+    "profile_image_thumbnail": "http://k.kakaocdn.net/dn/crCNHk/btqFQAuMn4e/sg68Qq8EZUaEh3QE4QsQj0/img_110x110.jpg",
+    "is_default_image": false,
+    "created_at": "2025-11-23T15:24:42.595Z",
+    "nickname": "",
+    "nickname_change_date": null,
+    "coins": 0,
+    "hospital_name": null,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "iolm.uploadjob",
+  "pk": 17,
+  "fields": {
+    "user": [
+      "kakao_3892265416"
+    ],
+    "zip_file": "iolm/zips/iolm_case3.zip",
+    "result_file": "iolm/results/2025-11-28_04-18_6_eyes_output.xlsx",
+    "original_filename": "iolm_case3.zip",
+    "num_images": 3,
+    "num_eyes": 6,
+    "processed_images": 3,
+    "status": "completed",
+    "created_at": "2025-11-28T04:15:12.453Z",
+    "updated_at": "2025-11-28T04:18:16.077Z",
+    "completed_at": "2025-11-28T04:18:16.077Z",
+    "error_message": "",
+    "usage_summary": {
+      "total_images": 3,
+      "total_eyes": 6,
+      "total_cost_usd": 0.053632,
+      "by_image": [
+        {
+          "image": "zeiss 1.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017896,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 69,
+                "reasoning_tokens": 0,
+                "total_tokens": 1963,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000552,
+                "total_cost_usd": 0.00434
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 185,
+                "reasoning_tokens": 0,
+                "total_tokens": 2822,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00148,
+                "total_cost_usd": 0.006754
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 11.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017888,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 70,
+                "reasoning_tokens": 0,
+                "total_tokens": 1964,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00056,
+                "total_cost_usd": 0.004348
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 187,
+                "reasoning_tokens": 0,
+                "total_tokens": 2824,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001496,
+                "total_cost_usd": 0.00677
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 187,
+                "reasoning_tokens": 0,
+                "total_tokens": 2824,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001496,
+                "total_cost_usd": 0.00677
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 2.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017848,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 63,
+                "reasoning_tokens": 0,
+                "total_tokens": 1957,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000504,
+                "total_cost_usd": 0.004292
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 188,
+                "reasoning_tokens": 0,
+                "total_tokens": 2825,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001504,
+                "total_cost_usd": 0.006778
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 188,
+                "reasoning_tokens": 0,
+                "total_tokens": 2825,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001504,
+                "total_cost_usd": 0.006778
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+},
+{
+  "model": "iolm.uploadjob",
+  "pk": 18,
+  "fields": {
+    "user": [
+      "kakao_3892265416"
+    ],
+    "zip_file": "iolm/zips/iolm_case2.zip",
+    "result_file": "iolm/results/2025-11-28_04-20_8_eyes_output.xlsx",
+    "original_filename": "iolm_case2.zip",
+    "num_images": 4,
+    "num_eyes": 8,
+    "processed_images": 4,
+    "status": "completed",
+    "created_at": "2025-11-28T04:19:10.882Z",
+    "updated_at": "2025-11-28T04:20:36.604Z",
+    "completed_at": "2025-11-28T04:20:36.604Z",
+    "error_message": "",
+    "usage_summary": {
+      "total_images": 4,
+      "total_eyes": 8,
+      "total_cost_usd": 0.068896,
+      "by_image": [
+        {
+          "image": "zeiss 1.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017896,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 69,
+                "reasoning_tokens": 0,
+                "total_tokens": 1963,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000552,
+                "total_cost_usd": 0.00434
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 185,
+                "reasoning_tokens": 0,
+                "total_tokens": 2822,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00148,
+                "total_cost_usd": 0.006754
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 10.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017888,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 70,
+                "reasoning_tokens": 0,
+                "total_tokens": 1964,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00056,
+                "total_cost_usd": 0.004348
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 187,
+                "reasoning_tokens": 0,
+                "total_tokens": 2824,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001496,
+                "total_cost_usd": 0.00677
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 187,
+                "reasoning_tokens": 0,
+                "total_tokens": 2824,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001496,
+                "total_cost_usd": 0.00677
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 2.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.01516,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 63,
+                "reasoning_tokens": 0,
+                "total_tokens": 1957,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000504,
+                "total_cost_usd": 0.004292
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 188,
+                "reasoning_tokens": 0,
+                "total_tokens": 2825,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001504,
+                "total_cost_usd": 0.006778
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 1792,
+                "fresh_input_tokens": 845,
+                "output_tokens": 188,
+                "reasoning_tokens": 0,
+                "total_tokens": 2825,
+                "input_cost_usd": 0.00169,
+                "cached_input_cost_usd": 0.000896,
+                "output_cost_usd": 0.001504,
+                "total_cost_usd": 0.00409
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 8.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017952,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 70,
+                "reasoning_tokens": 0,
+                "total_tokens": 1964,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00056,
+                "total_cost_usd": 0.004348
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+},
+{
+  "model": "iolm.uploadjob",
+  "pk": 19,
+  "fields": {
+    "user": [
+      "kakao_3892265416"
+    ],
+    "zip_file": "iolm/zips/iolm_case1_Vdl1h6F.zip",
+    "result_file": "iolm/results/2025-11-28_04-22_18_eyes_output.xlsx",
+    "original_filename": "iolm_case1.zip",
+    "num_images": 9,
+    "num_eyes": 18,
+    "processed_images": 9,
+    "status": "completed",
+    "created_at": "2025-11-28T04:19:26.262Z",
+    "updated_at": "2025-11-28T04:22:39.723Z",
+    "completed_at": "2025-11-28T04:22:39.723Z",
+    "error_message": "",
+    "usage_summary": {
+      "total_images": 9,
+      "total_eyes": 18,
+      "total_cost_usd": 0.158584,
+      "by_image": [
+        {
+          "image": "zeiss 1.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017896,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 69,
+                "reasoning_tokens": 0,
+                "total_tokens": 1963,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000552,
+                "total_cost_usd": 0.00434
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 185,
+                "reasoning_tokens": 0,
+                "total_tokens": 2822,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00148,
+                "total_cost_usd": 0.006754
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 2.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.01516,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 63,
+                "reasoning_tokens": 0,
+                "total_tokens": 1957,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000504,
+                "total_cost_usd": 0.004292
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 1792,
+                "fresh_input_tokens": 845,
+                "output_tokens": 188,
+                "reasoning_tokens": 0,
+                "total_tokens": 2825,
+                "input_cost_usd": 0.00169,
+                "cached_input_cost_usd": 0.000896,
+                "output_cost_usd": 0.001504,
+                "total_cost_usd": 0.00409
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 188,
+                "reasoning_tokens": 0,
+                "total_tokens": 2825,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001504,
+                "total_cost_usd": 0.006778
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 3.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017952,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 70,
+                "reasoning_tokens": 0,
+                "total_tokens": 1964,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00056,
+                "total_cost_usd": 0.004348
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 4.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017912,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 63,
+                "reasoning_tokens": 0,
+                "total_tokens": 1957,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000504,
+                "total_cost_usd": 0.004292
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 192,
+                "reasoning_tokens": 0,
+                "total_tokens": 2829,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001536,
+                "total_cost_usd": 0.00681
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 192,
+                "reasoning_tokens": 0,
+                "total_tokens": 2829,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001536,
+                "total_cost_usd": 0.00681
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 5.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017952,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 69,
+                "reasoning_tokens": 0,
+                "total_tokens": 1963,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000552,
+                "total_cost_usd": 0.00434
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 192,
+                "reasoning_tokens": 0,
+                "total_tokens": 2829,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001536,
+                "total_cost_usd": 0.00681
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 6.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017896,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 63,
+                "reasoning_tokens": 0,
+                "total_tokens": 1957,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000504,
+                "total_cost_usd": 0.004292
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 7.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.01796,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 71,
+                "reasoning_tokens": 0,
+                "total_tokens": 1965,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000568,
+                "total_cost_usd": 0.0043560000000000005
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 8.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017952,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 70,
+                "reasoning_tokens": 0,
+                "total_tokens": 1964,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00056,
+                "total_cost_usd": 0.004348
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 9.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017904,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 63,
+                "reasoning_tokens": 0,
+                "total_tokens": 1957,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000504,
+                "total_cost_usd": 0.004292
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 192,
+                "reasoning_tokens": 0,
+                "total_tokens": 2829,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001536,
+                "total_cost_usd": 0.00681
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+},
+{
+  "model": "iolm.uploadjob",
+  "pk": 20,
+  "fields": {
+    "user": [
+      "kakao_3892265416"
+    ],
+    "zip_file": "iolm/zips/iolm_case3_66NLDDY.zip",
+    "result_file": "iolm/results/2025-11-28_04-20_6_eyes_output.xlsx",
+    "original_filename": "iolm_case3.zip",
+    "num_images": 3,
+    "num_eyes": 6,
+    "processed_images": 3,
+    "status": "completed",
+    "created_at": "2025-11-28T04:19:41.504Z",
+    "updated_at": "2025-11-28T04:20:56.795Z",
+    "completed_at": "2025-11-28T04:20:56.795Z",
+    "error_message": "",
+    "usage_summary": {
+      "total_images": 3,
+      "total_eyes": 6,
+      "total_cost_usd": 0.053632,
+      "by_image": [
+        {
+          "image": "zeiss 1.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017896,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 69,
+                "reasoning_tokens": 0,
+                "total_tokens": 1963,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000552,
+                "total_cost_usd": 0.00434
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 185,
+                "reasoning_tokens": 0,
+                "total_tokens": 2822,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00148,
+                "total_cost_usd": 0.006754
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 11.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017888,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 70,
+                "reasoning_tokens": 0,
+                "total_tokens": 1964,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00056,
+                "total_cost_usd": 0.004348
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 187,
+                "reasoning_tokens": 0,
+                "total_tokens": 2824,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001496,
+                "total_cost_usd": 0.00677
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 187,
+                "reasoning_tokens": 0,
+                "total_tokens": 2824,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001496,
+                "total_cost_usd": 0.00677
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 2.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017848,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 63,
+                "reasoning_tokens": 0,
+                "total_tokens": 1957,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000504,
+                "total_cost_usd": 0.004292
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 188,
+                "reasoning_tokens": 0,
+                "total_tokens": 2825,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001504,
+                "total_cost_usd": 0.006778
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 188,
+                "reasoning_tokens": 0,
+                "total_tokens": 2825,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001504,
+                "total_cost_usd": 0.006778
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+},
+{
+  "model": "iolm.uploadjob",
+  "pk": 21,
+  "fields": {
+    "user": [
+      "kakao_3892265416"
+    ],
+    "zip_file": "iolm/zips/iolm_case3_6cyBkPg.zip",
+    "result_file": "iolm/results/2025-11-28_06-22_6_eyes_output.xlsx",
+    "original_filename": "iolm_case3.zip",
+    "num_images": 3,
+    "num_eyes": 6,
+    "processed_images": 3,
+    "status": "completed",
+    "created_at": "2025-11-28T06:21:47.161Z",
+    "updated_at": "2025-11-28T06:22:55.028Z",
+    "completed_at": "2025-11-28T06:22:55.027Z",
+    "error_message": "",
+    "usage_summary": {
+      "total_images": 3,
+      "total_eyes": 6,
+      "total_cost_usd": 0.053632,
+      "by_image": [
+        {
+          "image": "zeiss 1.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017896,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 69,
+                "reasoning_tokens": 0,
+                "total_tokens": 1963,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000552,
+                "total_cost_usd": 0.00434
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 185,
+                "reasoning_tokens": 0,
+                "total_tokens": 2822,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00148,
+                "total_cost_usd": 0.006754
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 11.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017888,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 70,
+                "reasoning_tokens": 0,
+                "total_tokens": 1964,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00056,
+                "total_cost_usd": 0.004348
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 187,
+                "reasoning_tokens": 0,
+                "total_tokens": 2824,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001496,
+                "total_cost_usd": 0.00677
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 187,
+                "reasoning_tokens": 0,
+                "total_tokens": 2824,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001496,
+                "total_cost_usd": 0.00677
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 2.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017848,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 63,
+                "reasoning_tokens": 0,
+                "total_tokens": 1957,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000504,
+                "total_cost_usd": 0.004292
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 188,
+                "reasoning_tokens": 0,
+                "total_tokens": 2825,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001504,
+                "total_cost_usd": 0.006778
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 188,
+                "reasoning_tokens": 0,
+                "total_tokens": 2825,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001504,
+                "total_cost_usd": 0.006778
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+},
+{
+  "model": "iolm.uploadjob",
+  "pk": 22,
+  "fields": {
+    "user": [
+      "kakao_3892265416"
+    ],
+    "zip_file": "iolm/zips/iolm_case3_xx6doPl.zip",
+    "result_file": "",
+    "original_filename": "iolm_case3.zip",
+    "num_images": 3,
+    "num_eyes": 4,
+    "processed_images": 2,
+    "status": "failed",
+    "created_at": "2025-11-28T06:35:26.583Z",
+    "updated_at": "2025-11-28T06:36:25.409Z",
+    "completed_at": "2025-11-28T06:36:25.409Z",
+    "error_message": "disk I/O error",
+    "usage_summary": {}
+  }
+},
+{
+  "model": "iolm.uploadjob",
+  "pk": 23,
+  "fields": {
+    "user": [
+      "kakao_3892265416"
+    ],
+    "zip_file": "iolm/zips/iolm_case3_3aXyCrW.zip",
+    "result_file": "iolm/results/2025-11-28_06-46_6_eyes_output.xlsx",
+    "original_filename": "iolm_case3.zip",
+    "num_images": 3,
+    "num_eyes": 6,
+    "processed_images": 3,
+    "status": "completed",
+    "created_at": "2025-11-28T06:45:07.065Z",
+    "updated_at": "2025-11-28T06:46:02.565Z",
+    "completed_at": "2025-11-28T06:46:02.565Z",
+    "error_message": "",
+    "usage_summary": {
+      "total_images": 3,
+      "total_eyes": 6,
+      "total_cost_usd": 0.053632,
+      "by_image": [
+        {
+          "image": "zeiss 1.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017896,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 69,
+                "reasoning_tokens": 0,
+                "total_tokens": 1963,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000552,
+                "total_cost_usd": 0.00434
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 185,
+                "reasoning_tokens": 0,
+                "total_tokens": 2822,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00148,
+                "total_cost_usd": 0.006754
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 11.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017888,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 70,
+                "reasoning_tokens": 0,
+                "total_tokens": 1964,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00056,
+                "total_cost_usd": 0.004348
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 187,
+                "reasoning_tokens": 0,
+                "total_tokens": 2824,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001496,
+                "total_cost_usd": 0.00677
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 187,
+                "reasoning_tokens": 0,
+                "total_tokens": 2824,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001496,
+                "total_cost_usd": 0.00677
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 2.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017848,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 63,
+                "reasoning_tokens": 0,
+                "total_tokens": 1957,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000504,
+                "total_cost_usd": 0.004292
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 188,
+                "reasoning_tokens": 0,
+                "total_tokens": 2825,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001504,
+                "total_cost_usd": 0.006778
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 188,
+                "reasoning_tokens": 0,
+                "total_tokens": 2825,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001504,
+                "total_cost_usd": 0.006778
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+},
+{
+  "model": "iolm.uploadjob",
+  "pk": 24,
+  "fields": {
+    "user": [
+      "kakao_3892265416"
+    ],
+    "zip_file": "iolm/zips/iolm_case3_eqEvZqu.zip",
+    "result_file": "iolm/results/2025-11-28_07-18_6_eyes_output.xlsx",
+    "original_filename": "iolm_case3.zip",
+    "num_images": 3,
+    "num_eyes": 6,
+    "processed_images": 3,
+    "status": "completed",
+    "created_at": "2025-11-28T07:17:34.461Z",
+    "updated_at": "2025-11-28T07:18:50.964Z",
+    "completed_at": "2025-11-28T07:18:50.964Z",
+    "error_message": "",
+    "usage_summary": {
+      "total_images": 3,
+      "total_eyes": 6,
+      "total_cost_usd": 0.053632,
+      "by_image": [
+        {
+          "image": "zeiss 1.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017896,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 69,
+                "reasoning_tokens": 0,
+                "total_tokens": 1963,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000552,
+                "total_cost_usd": 0.00434
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 185,
+                "reasoning_tokens": 0,
+                "total_tokens": 2822,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00148,
+                "total_cost_usd": 0.006754
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 11.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017888,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 70,
+                "reasoning_tokens": 0,
+                "total_tokens": 1964,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00056,
+                "total_cost_usd": 0.004348
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 187,
+                "reasoning_tokens": 0,
+                "total_tokens": 2824,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001496,
+                "total_cost_usd": 0.00677
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 187,
+                "reasoning_tokens": 0,
+                "total_tokens": 2824,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001496,
+                "total_cost_usd": 0.00677
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 2.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017848,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 63,
+                "reasoning_tokens": 0,
+                "total_tokens": 1957,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000504,
+                "total_cost_usd": 0.004292
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 188,
+                "reasoning_tokens": 0,
+                "total_tokens": 2825,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001504,
+                "total_cost_usd": 0.006778
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 188,
+                "reasoning_tokens": 0,
+                "total_tokens": 2825,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001504,
+                "total_cost_usd": 0.006778
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+},
+{
+  "model": "iolm.uploadjob",
+  "pk": 25,
+  "fields": {
+    "user": [
+      "kakao_3892265416"
+    ],
+    "zip_file": "iolm/zips/iolm_case2_dUktplR.zip",
+    "result_file": "iolm/results/2025-11-28_07-19_8_eyes_output.xlsx",
+    "original_filename": "iolm_case2.zip",
+    "num_images": 4,
+    "num_eyes": 8,
+    "processed_images": 4,
+    "status": "completed",
+    "created_at": "2025-11-28T07:17:42.492Z",
+    "updated_at": "2025-11-28T07:19:19.771Z",
+    "completed_at": "2025-11-28T07:19:19.771Z",
+    "error_message": "",
+    "usage_summary": {
+      "total_images": 4,
+      "total_eyes": 8,
+      "total_cost_usd": 0.071584,
+      "by_image": [
+        {
+          "image": "zeiss 1.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017896,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 69,
+                "reasoning_tokens": 0,
+                "total_tokens": 1963,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000552,
+                "total_cost_usd": 0.00434
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 185,
+                "reasoning_tokens": 0,
+                "total_tokens": 2822,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00148,
+                "total_cost_usd": 0.006754
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 10.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017888,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 70,
+                "reasoning_tokens": 0,
+                "total_tokens": 1964,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00056,
+                "total_cost_usd": 0.004348
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 187,
+                "reasoning_tokens": 0,
+                "total_tokens": 2824,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001496,
+                "total_cost_usd": 0.00677
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 187,
+                "reasoning_tokens": 0,
+                "total_tokens": 2824,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001496,
+                "total_cost_usd": 0.00677
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 2.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017848,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 63,
+                "reasoning_tokens": 0,
+                "total_tokens": 1957,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.000504,
+                "total_cost_usd": 0.004292
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 188,
+                "reasoning_tokens": 0,
+                "total_tokens": 2825,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001504,
+                "total_cost_usd": 0.006778
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 188,
+                "reasoning_tokens": 0,
+                "total_tokens": 2825,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001504,
+                "total_cost_usd": 0.006778
+              }
+            }
+          }
+        },
+        {
+          "image": "zeiss 8.jpg",
+          "eyes": 2,
+          "usage": {
+            "cost_usd": 0.017952,
+            "usage_raw": {
+              "ptnt": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 1894,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 1894,
+                "output_tokens": 70,
+                "reasoning_tokens": 0,
+                "total_tokens": 1964,
+                "input_cost_usd": 0.003788,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.00056,
+                "total_cost_usd": 0.004348
+              },
+              "od": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              },
+              "os": {
+                "model": "gpt-4.1-2025-04-14",
+                "family": "gpt-4.1",
+                "input_tokens": 2637,
+                "cached_input_tokens": 0,
+                "fresh_input_tokens": 2637,
+                "output_tokens": 191,
+                "reasoning_tokens": 0,
+                "total_tokens": 2828,
+                "input_cost_usd": 0.005274,
+                "cached_input_cost_usd": 0.0,
+                "output_cost_usd": 0.001528,
+                "total_cost_usd": 0.006802
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2025-11-25T15:03:40.354Z",
+    "user": [
+      "ytkim1"
+    ],
+    "content_type": [
+      "iolm",
+      "uploadjob"
+    ],
+    "object_id": "2",
+    "object_repr": "IOLM Upload #2 (kakao_3892265416)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2025-11-25T15:03:44.043Z",
+    "user": [
+      "ytkim1"
+    ],
+    "content_type": [
+      "iolm",
+      "uploadjob"
+    ],
+    "object_id": "1",
+    "object_repr": "IOLM Upload #1 (kakao_3892265416)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2025-11-25T16:16:18.033Z",
+    "user": [
+      "ytkim1"
+    ],
+    "content_type": [
+      "iolm",
+      "uploadjob"
+    ],
+    "object_id": "3",
+    "object_repr": "IOLM Upload #3 (kakao_3892265416)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2025-11-28T03:17:15.474Z",
+    "user": [
+      "ytkim1"
+    ],
+    "content_type": [
+      "iolm",
+      "uploadjob"
+    ],
+    "object_id": "15",
+    "object_repr": "IOLM Upload #15 (kakao_3892265416)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+}
+]
