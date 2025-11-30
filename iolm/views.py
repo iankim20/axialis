@@ -14,6 +14,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse
 
 from .models import UploadJob
+import os
 from .tasks import process_upload_job   
 from django.conf import settings
 

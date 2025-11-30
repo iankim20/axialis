@@ -5,6 +5,7 @@ import os
 
 import io
 import tempfile
+from datetime import timedelta
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any, Dict, List, Tuple
@@ -325,6 +326,50 @@ def build_excel_in_memory(
     filename = f"{timestamp}_{eye_count} eyes_output.xlsx"
 
     return buf.getvalue(), filename
+
+
+@shared_task
+def cleanup_old_zips() -> None:
+    """
+    하루 지난 ZIP 파일(iolm/zips)을 S3/로컬에서 정리하는 주기 작업.
+
+    조건:
+    - status = completed
+    - zip_file 이 존재하고 (isnull=False)
+    - zip_deleted_at 이 아직 None
+    - created_at 이 1일 이전
+    """
+    # cutoff = timezone.now() - timedelta(minutes=1)
+    cutoff = timezone.now() - timedelta(days=1)
+
+    qs = UploadJob.objects.filter(
+        status=UploadJob.Status.COMPLETED,
+        zip_file__isnull=False,
+        zip_deleted_at__isnull=True,
+        created_at__lt=cutoff,
+    )
+
+    logger.info(
+        "cleanup_old_zips: 대상 job 수 = %s (cutoff=%s)",
+        qs.count(),
+        cutoff.isoformat(),
+    )
+
+    for job in qs.iterator():
+        zip_name = job.zip_file.name
+
+        # S3든 로컬이든 동일한 API: 실제 파일 삭제
+        job.zip_file.delete(save=False)
+
+        # zip_deleted_at만 기록 (필요하면 zip_file 필드까지 비워도 됨)
+        job.zip_deleted_at = timezone.now()
+        job.save(update_fields=["zip_deleted_at"])
+
+        logger.info(
+            "cleanup_old_zips: job=%s zip 삭제 완료 (name=%s)",
+            job.id,
+            zip_name,
+        )
 
 
 
