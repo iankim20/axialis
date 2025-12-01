@@ -1,0 +1,99 @@
+/* 전체 레이아웃 */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #111827;
+  background-color: #f9fafb;
+}
+
+/* 네비게이션 바 */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 32px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #374151;
+  margin-left: 16px;
+  font-size: 14px;
+}
+
+.nav a:hover {
+  color: #111827;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 18px;
+  color: #111827;
+}
+
+.btn-primary {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #2563eb;
+  color: #ffffff !important;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 히어로 섹션 */
+.hero {
+  padding: 80px 24px 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-inner {
+  max-width: 720px;
+  text-align: center;
+}
+
+.hero-inner h1 {
+  font-size: 36px;
+  margin-bottom: 16px;
+}
+
+.hero-inner p {
+  font-size: 16px;
+  color: #4b5563;
+  margin-bottom: 24px;
+}
+
+.hero-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.hint {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* 섹션 공통 */
+.section {
+  padding: 48px 24px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.section h2 {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.feature-list {
+  padding-left: 18px;
+  color: #4b5563;
+}
