@@ -18,7 +18,6 @@ from django.utils.timezone import activate
 import dj_database_url
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-KAKAO_REST_API_KEY = os.getenv("KAKAO_REST_API_KEY")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -133,11 +132,27 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-KAKAO_REST_API_KEY = KAKAO_REST_API_KEY
-KAKAO_REDIRECT_URI = 'http://127.0.0.1:8000/users/kakao/callback/'
+KAKAO_REST_API_KEY = os.getenv("KAKAO_REST_API_KEY")
+
+KAKAO_REDIRECT_URI = os.getenv(
+    "KAKAO_REDIRECT_URI",
+    "http://127.0.0.1:8000/users/kakao/callback/",  # 기본값: 로컬 개발용
+)
+
+KAKAO_LOGOUT_REDIRECT_URI = os.getenv(
+    "KAKAO_LOGOUT_REDIRECT_URI",
+    "http://127.0.0.1:8000/users/logout_complete/",
+)
+
+
+# KAKAO_REDIRECT_URI = 'http://127.0.0.1:8000/users/kakao/callback/'
 # KAKAO_REDIRECT_URI = 'https://axialis.ai/users/kakao/callback/'
-KAKAO_LOGOUT_REDIRECT_URI = 'http://127.0.0.1:8000/users/logout_complete/'
+# KAKAO_REDIRECT_URI = 'https://axialis-web.onrender.com/users/kakao/callback/'
+
+# KAKAO_LOGOUT_REDIRECT_URI = 'http://127.0.0.1:8000/users/logout_complete/'
 # KAKAO_LOGOUT_REDIRECT_URI = 'https://axialis.ai/users/logout_complete/'
+# KAKAO_LOGOUT_REDIRECT_URI = 'https://axialis-web.onrender.com/users/logout_complete/'
+
 
 # Kakao host 상수
 KAKAO_AUTH_HOST = "https://kauth.kakao.com"
