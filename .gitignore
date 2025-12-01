@@ -205,3 +205,9 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Django collectstatic output (never commit)
+staticfiles/
+staticfiles.json
+# Windows/Zone metadata files
+*Zone.Identifier*
