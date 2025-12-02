@@ -336,9 +336,9 @@ def ocr_ptnt_info(
     img_header: np.ndarray,
     model_ptnt: str = "gpt-4.1",
     effort_ptnt: str = "medium",  # "low" | "medium" | "high"
-    temp_ptnt: float = 0.1,
+    temp_ptnt: float = 0.0,
     max_tokens_ptnt: int | None = None,
-    top_p_ptnt: float = 0.9,
+    top_p_ptnt: float = 0.15,
 )  -> Dict[str, Any]:
     data_url = image_array_to_data_url(img_header)
 
@@ -397,9 +397,9 @@ def ocr_biometry_single_eye(
     eye_hint: str,
     model_biometry: str = "gpt-4.1",
     effort_biometry: str = "medium",  # "low" | "medium" | "high"
-    temp_biometry: float = 0.1,
+    temp_biometry: float = 0.0,
     max_tokens_biometry: int | None = None,
-    top_p_biometry: float = 0.9,
+    top_p_biometry: float = 0.15,
 ) -> Dict[str, Any]:
     data_url = image_array_to_data_url(img_eye)
 
@@ -456,14 +456,14 @@ def process_iolm_image(
     image_path: Path,
     model_ptnt: str = "gpt-4.1",
     effort_ptnt: str = "medium",
-    temp_ptnt: float = 0.1,
-    top_p_ptnt: float = 0.9,
+    temp_ptnt: float = 0.0,
+    top_p_ptnt: float = 0.15,
     max_tokens_ptnt: Optional[int] = 400,
     
     model_biometry: str = "gpt-4.1",
     effort_biometry: str = "medium",
-    temp_biometry: float = 0.1,
-    top_p_biometry: float = 0.9,
+    temp_biometry: float = 0.0,
+    top_p_biometry: float = 0.15,
     max_tokens_biometry: Optional[int] = 400,
     
     scale_factor: float = 1.5,  
