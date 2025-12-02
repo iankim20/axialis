@@ -112,7 +112,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (isReloading) return;
 
         // [핵심] 완료(Completed) 감지 시 페이지 즉시 새로고침 (이때 완료 시간, 파일명 등이 렌더링됨)
-        if (data.status === 'completed') {
+        if (
+            data.status === "completed" ||
+            (data.status === "failed" && data.has_result_file)
+        ) {
             isReloading = true;
             window.location.reload();
             return;

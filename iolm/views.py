@@ -19,8 +19,13 @@ from .tasks import process_upload_job
 from django.conf import settings
 
 from zoneinfo import ZoneInfo
-from django.utils import timezone
 
+from django.utils import timezone
+import json
+import boto3
+from uuid import uuid4
+from botocore.config import Config
+from django.views.decorators.http import require_POST
 
 def upload_page(request):
     max_bytes = settings.IOLM_MAX_UPLOAD_BYTES
@@ -144,6 +149,9 @@ def upload_job_status(request, pk: int) -> JsonResponse:
     """
     Ajax 폴링용: 특정 UploadJob의 진행 상황을 JSON으로 반환.
     """
+    if not request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return HttpResponseBadRequest("AJAX only")
+        
     job = get_object_or_404(UploadJob, pk=pk, user=request.user)
 
     data = {
@@ -153,5 +161,6 @@ def upload_job_status(request, pk: int) -> JsonResponse:
         "progress_percent": job.progress_percent,
         "completed": job.status == UploadJob.Status.COMPLETED,
         "failed": job.status == UploadJob.Status.FAILED,
+        "has_result_file": bool(job.result_file),
     }
     return JsonResponse(data)

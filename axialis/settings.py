@@ -198,7 +198,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"  # 나중에 collectstatic용
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # settings.py 맨 아래나 관련 섹션에 추가
-IOLM_MAX_UPLOAD_BYTES = 300 * 1024 * 1024  # 200MB
+IOLM_MAX_UPLOAD_BYTES = 250 * 1024 * 1024  # 200MB
 
 
 ### storage-related
@@ -229,6 +229,7 @@ if USE_S3_MEDIA:
     MEDIA_ROOT = None   # S3 사용 시 로컬 media 폴더는 의미 없음
 else:
     # 지금까지 쓰던 로컬 media
+    # print("no S3")
     MEDIA_URL = "/media/"
     MEDIA_ROOT = BASE_DIR / "media"
 
@@ -260,14 +261,17 @@ CELERY_RESULT_BACKEND = os.getenv(
 # 타임존/언어에 맞게
 CELERY_TIMEZONE = "Asia/Seoul"
 CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 60 * 90  # 30분 타임아웃 예시
+CELERY_TASK_TIME_LIMIT = 12 * 60 * 60  #5hours time limit  
+IOLM_TASK_SOFT_LIMIT = int(os.getenv("IOLM_TASK_SOFT_LIMIT", str(6 * 60 * 60)))
+
+CELERY_WORKER_MAX_TASKS_PER_CHILD = 20
+
 # Celery가 print/stdout 를 logging 으로 보낼지 여부 (기본 True지만 명시해두는 편이 좋음)
 CELERY_WORKER_REDIRECT_STDOUTS = True
 CELERY_WORKER_REDIRECT_STDOUTS_LEVEL = "INFO"  # print 도 INFO 로 취급
 
 # Django LOGGING 을 그대로 쓰고 싶으면 추천
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
-
 
 
 LOG_DIR = BASE_DIR / "logs"

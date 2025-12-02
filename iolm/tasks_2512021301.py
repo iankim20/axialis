@@ -5,8 +5,6 @@ import os
 import io
 import pandas as pd
 import tempfile
-import time
-import shutil
 
 from datetime import timedelta
 from pathlib import Path
@@ -110,65 +108,43 @@ def run_ocr_for_image(image_path: str) -> Tuple[List[Dict[str, Any]], Dict[str, 
 
     return rows, image_usage
 
-def _fix_korean_zip_name(name: str) -> str:
+
+
+def _extract_zip_images(zip_file_field, tmpdir: str) -> List[str]:
     """
-    Windows에서 CP949로 저장된 zip 파일명이 CP437로 잘못 디코딩된 경우를 되돌리기 위한 best-effort 복구.
+    ZIP FileField에서 이미지 확장자(IMAGE_EXTENSIONS)에 해당하는 파일만
+    tmpdir 아래로 풀어서, 풀린 이미지 파일 경로 리스트를 반환한다.
 
-    - ASCII 범위의 이름은 그대로 유지된다.
-    - cp437로 인코딩이 안 되면 원래 문자열을 반환한다.
+    - S3 / 로컬 상관없이 zip_file_field.open(\"rb\") 로 읽어서 BytesIO로 감싼 뒤 ZipFile 사용
+    - zip_file_field.path 에 의존하지 않으므로, DEFAULT_FILE_STORAGE 가 S3여도 안전
     """
-    try:
-        raw = name.encode("cp437")
-        return raw.decode("cp949")
-    except UnicodeError:
-        return name
-
-
-
-def _extract_zip_images(field_file, tmpdir: str) -> List[str]:
-    """
-    S3 / 로컬 공통: UploadJob.zip_file(FileField)를 받아
-    tmpdir 아래로 이미지 파일만 추출하고, 경로 리스트를 반환.
-
-    - 한글 파일명 깨짐(CP949↔CP437) 복구.
-    - 디렉토리 구조는 무시하고 basename만 사용.
-    """
-    from zipfile import ZipFile
-
     tmpdir_path = Path(tmpdir)
     image_paths: List[str] = []
 
-    # FileField 자체에서 바이트 읽기
-    field_file.open("rb")
-    try:
-        zip_bytes = field_file.read()
-    finally:
-        field_file.close()
+    # 1) storage-agnostic하게 ZIP 전체 바이트 읽기
+    with zip_file_field.open("rb") as f:
+        zip_bytes = f.read()
 
     with ZipFile(io.BytesIO(zip_bytes)) as zf:
-        # 디렉토리가 아닌 이미지 파일만 선별
-        image_infos = [
-            info
-            for info in zf.infolist()
-            if not info.is_dir()
-            and Path(info.filename).suffix.lower() in IMAGE_EXTENSIONS
+        # 디렉토리 제외 + 확장자 필터링
+        image_names = [
+            name
+            for name in zf.namelist()
+            if (
+                not name.endswith("/") and
+                Path(name).suffix.lower() in IMAGE_EXTENSIONS
+            )
         ]
 
-        # 원래 zip 내부 이름 기준으로 정렬
-        image_infos.sort(key=lambda info: info.filename)
+        image_names.sort()
 
-        for info in image_infos:
-            orig_name = info.filename          # zip 내부 이름 (깨졌을 수 있음)
-            # 디렉토리는 무시하고 basename만 교정
-            raw_basename = Path(orig_name).name
-            fixed_basename = _fix_korean_zip_name(raw_basename)
-
-            dest_path = tmpdir_path / fixed_basename
+        # 2) 선택된 이미지 파일만 tmpdir에 추출
+        for name in image_names:
+            dest_path = tmpdir_path / name
             dest_path.parent.mkdir(parents=True, exist_ok=True)
 
-            # zip 내부에서는 orig_name으로 접근해야 함
-            with zf.open(orig_name) as src, open(dest_path, "wb") as dst:
-                shutil.copyfileobj(src, dst)
+            with zf.open(name) as src, open(dest_path, "wb") as dst:
+                dst.write(src.read())
 
             image_paths.append(str(dest_path))
 
@@ -205,12 +181,11 @@ def process_upload_job(self, job_id: int) -> None:
     try:
         job = UploadJob.objects.get(pk=job_id)
     except UploadJob.DoesNotExist:
-        logger.error("Job %s not found.", job_id)
+        logger.error(f"Job {job_id} not found.")
         return
-
+    
     logger.info("START job=%s task=%s pid=%s", job.id, task_id, os.getpid())
 
-    # 초기화
     job.status = UploadJob.Status.PROCESSING
     job.processed_images = 0
     job.num_images = 0
@@ -230,49 +205,27 @@ def process_upload_job(self, job_id: int) -> None:
         ]
     )
 
-    # ---- 내부 soft-limit(초 단위)를 수동으로 관리 ----
-    raw_soft = getattr(settings, "IOLM_TASK_SOFT_LIMIT", None)
-    try:
-        soft_limit = float(raw_soft) if raw_soft is not None else None
-    except (TypeError, ValueError):
-        soft_limit = None
-
+    # ---- 소프트 타임리밋(작업 내부용) 설정 ----
+    soft_limit = getattr(settings, "IOLM_TASK_SOFT_LIMIT", None)
     start_ts = time.monotonic()
     soft_timed_out = False
 
     usage_summary = _build_usage_aggregator()
     all_rows: List[Dict[str, Any]] = []
     total_eyes = 0
-    total_images = 0
 
     try:
         with TemporaryDirectory() as tmpdir:
-            # S3/로컬 공통 ZIP 추출
+            # ⬇️ S3/로컬 모두 동작하도록 FileField 자체를 넘김
             image_paths = _extract_zip_images(job.zip_file, tmpdir)
             total_images = len(image_paths)
 
+            # DB에 총 이미지 수 업데이트
             job.num_images = total_images
             job.updated_at = timezone.now()
             job.save(update_fields=["num_images", "updated_at"])
 
             for idx, image_path in enumerate(image_paths, start=1):
-                # 소프트 타임리밋 체크 (다음 이미지 들어가기 전에 검사)
-                if soft_limit is not None:
-                    elapsed = time.monotonic() - start_ts
-                    if elapsed >= soft_limit:
-                        soft_timed_out = True
-                        logger.warning(
-                            "IOLM soft limit reached job=%s task=%s "
-                            "(elapsed=%.1fs / limit=%.1fs, last_idx=%s/%s)",
-                            job.id,
-                            task_id,
-                            elapsed,
-                            soft_limit,
-                            idx - 1,
-                            total_images,
-                        )
-                        break
-
                 filename = os.path.basename(image_path)
                 logger.info(
                     "PROCESS job=%s task=%s idx=%s/%s file=%s pid=%s",
@@ -291,7 +244,7 @@ def process_upload_job(self, job_id: int) -> None:
 
                 _update_usage(usage_summary, filename, image_usage, eye_count)
 
-                # 진행률 업데이트 (DB는 update, job 인스턴스도 같이 유지)
+                # 진행률 업데이트
                 job.processed_images = idx
                 job.num_eyes = total_eyes
                 UploadJob.objects.filter(pk=job.id).update(
@@ -300,57 +253,14 @@ def process_upload_job(self, job_id: int) -> None:
                     updated_at=timezone.now(),
                 )
 
-            # soft timeout이 아닌 경우에만 "완전 정상 완료" 기준 엑셀 준비
-            if not soft_timed_out:
-                excel_bytes, excel_filename = build_excel_in_memory(all_rows, job)
-                job.processed_images = total_images
-                job.num_eyes = total_eyes
+            # 여기서 all_rows 를 가지고 엑셀 파일 생성
+            excel_bytes, excel_filename = build_excel_in_memory(all_rows, job)
 
-        # ---- 소프트 타임리밋에 걸린 경우: partial 결과 저장 + FAILED ----
-        if soft_timed_out:
-            if all_rows:
-                # 지금까지 처리된 눈 개수 기준으로 num_eyes 보정
-                job.num_eyes = total_eyes
-                partial_bytes, partial_filename = build_excel_in_memory(all_rows, job)
-                job.result_file.save(
-                    partial_filename,
-                    ContentFile(partial_bytes),
-                    save=False,
-                )
+            # 루프 종료 후 최종 값 명시적으로 고정
+            job.processed_images = total_images
+            job.num_eyes = total_eyes
 
-            job.status = UploadJob.Status.FAILED
-            job.error_message = "Time limit exceeded (partial result saved)"
-            job.completed_at = timezone.now()
-            job.updated_at = job.completed_at
-            job.usage_summary = usage_summary
-
-            job.save(
-                update_fields=[
-                    "status",
-                    "error_message",
-                    "completed_at",
-                    "updated_at",
-                    "num_images",
-                    "num_eyes",
-                    "processed_images",
-                    "result_file",
-                    "usage_summary",
-                ]
-            )
-
-            logger.warning(
-                "DONE (SOFT TIMEOUT, partial) job=%s task=%s images=%s processed=%s eyes=%s pid=%s",
-                job.id,
-                task_id,
-                total_images,
-                job.processed_images,
-                job.num_eyes,
-                os.getpid(),
-            )
-            # 여기서는 예외를 다시 던지지 않고, DB 상 FAILED + partial 파일만 남긴다.
-            return
-
-        # ---- 정상 완료: 전체 결과 저장 + COMPLETED ----
+        # 결과 파일 저장 및 최종 상태 업데이트
         job.result_file.save(excel_filename, ContentFile(excel_bytes), save=False)
 
         job.status = UploadJob.Status.COMPLETED
@@ -379,6 +289,46 @@ def process_upload_job(self, job_id: int) -> None:
             job.num_eyes,
             os.getpid(),
         )
+
+    except SoftTimeLimitExceeded:
+        # <= 소프트 타임리밋에 걸렸을 때: 지금까지 결과라도 저장
+        logger.warning(
+            "Soft time limit exceeded for job=%s task=%s (partial result will be saved)",
+            job.id,
+            task_id,
+        )
+
+        if all_rows:
+            # 지금까지 처리된 눈 수로 num_eyes 세팅 후 파일 생성
+            job.num_eyes = len(all_rows)
+            result_bytes, filename = build_excel_in_memory(all_rows, job)
+            job.result_file.save(
+                filename,
+                ContentFile(result_bytes),
+                save=False,
+            )
+
+        job.status = UploadJob.Status.FAILED
+        job.error_message = "Time limit exceeded (partial result saved)"
+        job.completed_at = timezone.now()
+        job.updated_at = job.completed_at
+        job.usage_summary = usage_summary
+
+        job.save(
+            update_fields=[
+                "status",
+                "error_message",
+                "completed_at",
+                "updated_at",
+                "num_images",        # 있어도 문제 없음
+                "num_eyes",
+                "processed_images",  # 있어도 문제 없음 (위에서 세팅했다면)
+                "result_file",
+                "usage_summary",
+            ]
+        )
+        # Celery 결과는 실패로 남기되, DB/파일에는 부분 결과 유지
+        raise
 
     except Exception as exc:  # noqa: BLE001
         logger.exception(

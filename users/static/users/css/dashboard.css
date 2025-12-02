@@ -378,6 +378,75 @@ body {
 }
 .file-link:hover .file-name { color: #1449d9; }
 
+/* 부분 실패(soft limit) 파일 표시용 래퍼 */
+.file-partial-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* (i) 정보 아이콘 */
+.info-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 1px solid #94a3b8;   /* slate-400 */
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;               /* slate-500 */
+  background-color: #f8fafc;    /* slate-50 */
+  cursor: default;
+}
+
+/* hover 시 배경/테두리/텍스트 살짝 바뀜 */
+.info-icon:hover {
+  background-color: #e0f2fe;    /* light blue */
+  border-color: #38bdf8;
+  color: #0ea5e9;
+}
+
+/* CSS-only tooltip */
+.info-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  top: auto;              /* 아래 위치는 끄고 */
+  bottom: 140%;           /* 아이콘 기준 위쪽으로 띄움 */
+  transform: translateX(-50%);
+
+  min-width: 220px;
+  max-width: 340px;
+  padding: 8px 10px;
+
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: left;
+
+  color: #0f172a;         /* 텍스트 진하게 */
+  background: #f9fafb;    /* 연한 회색 배경 */
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15);
+
+  white-space: normal;    /* 문단처럼 줄바꿈 */
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+}
+
+/* hover 시 tooltip 표시 */
+.info-icon:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(2px); /* 위로 살짝 튀어나오게 */
+}
+
+
+
+
 /* Buttons */
 .btn-icon {
   background: transparent; border: none; cursor: pointer;

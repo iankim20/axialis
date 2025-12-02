@@ -125,3 +125,11 @@ class UploadJob(models.Model):
         if self.processed_images >= self.num_images:
             return 100
         return int(self.processed_images * 100 / self.num_images)
+
+    @property
+    def has_result_file(self) -> bool:
+        return bool(self.result_file)
+
+    @property
+    def is_partial_failure(self) -> bool:
+        return self.status == self.Status.FAILED and self.has_result_file

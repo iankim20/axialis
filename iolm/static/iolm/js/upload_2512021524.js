@@ -281,7 +281,7 @@ function setupSecurityCard() {
 /* -------------------------------------------------------------------------- */
 /* 4. UPLOAD LOGIC (With JSZip & New Buttons) */
 /* -------------------------------------------------------------------------- */
-function setupZipUpload(uploadWidget) {
+function setupZipUpload() {
     const form = document.getElementById("zip-upload-form");
     if (!form) return;
 
@@ -309,8 +309,6 @@ function setupZipUpload(uploadWidget) {
         throw new Error("MAX_SIZE is not defined on #zip-upload-form");
     }
 
-    let lastImageCount = 0;
-
     // Helper Functions
     const formatSize = (bytes) => {
         if (bytes === 0) return '0 B';
@@ -336,18 +334,17 @@ function setupZipUpload(uploadWidget) {
         // Buttons
         // Browse: Active
         browseBtn.disabled = false;
+        // Reset: Disabled
         resetBtn.disabled = true;
+        // Analyze: Disabled
         analyzeBtn.disabled = true;
 
         // Data
         costEl.textContent = "0 P";
-        lastImageCount = 0;
     };
 
     // State 2: File Loaded
     const updateUIForFile = (file, imgCount) => {
-        lastImageCount = imgCount;
-
         // Drag Area View
         defaultView.hidden = true;
         analyzingView.hidden = true;
@@ -428,114 +425,9 @@ function setupZipUpload(uploadWidget) {
         analyzeZip(file);
     };
 
-    const getCsrfToken = () => {
-        const input = form.querySelector("input[name='csrfmiddlewaretoken']");
-        return input ? input.value : "";
-    };
-
-    const uploadFileToS3 = async (presignData, file) => {
-        const formData = new FormData();
-        Object.entries(presignData.fields || {}).forEach(([key, value]) => {
-            formData.append(key, value);
-        });
-        formData.append("file", file);
-
-        const res = await fetch(presignData.url, {
-            method: "POST",
-            body: formData
-        });
-
-        if (!res.ok) {
-            throw new Error("S3 upload failed");
-        }
-    };
-
-    const requestPresignedPost = async (file) => {
-        const res = await fetch("/iolm/upload/presign/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCsrfToken()
-            },
-            body: JSON.stringify({
-                filename: file.name,
-                size_bytes: file.size,
-                content_type: "application/zip"
-            })
-        });
-
-        if (!res.ok) {
-            throw new Error("Presign request failed");
-        }
-
-        return res.json(); // { url, fields, object_key } 형태로 가정
-    };
-
-    const registerUploadOnBackend = async ({
-        objectKey,
-        file,
-        imageCount,
-        expectedPoints
-    }) => {
-        const res = await fetch("/iolm/upload/register/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCsrfToken()
-            },
-            body: JSON.stringify({
-                object_key: objectKey,
-                original_filename: file.name,
-                size_bytes: file.size,
-                image_count: imageCount,
-                expected_points: expectedPoints
-            })
-        });
-
-        if (!res.ok) {
-            throw new Error("Register request failed");
-        }
-
-        return res.json(); // { job_id: ... } 정도를 기대
-    };
-
-    const startPresignedUpload = async ({ file, imageCount, expectedPoints }) => {
-        const widget = uploadWidget && typeof uploadWidget.onUploadStarted === "function"
-            ? uploadWidget
-            : null;
-
-        if (widget) {
-            widget.onUploadStarted({
-                fileName: file.name,
-                fileSizeBytes: file.size
-            });
-        }
-
-        try {
-            const presign = await requestPresignedPost(file);
-            await uploadFileToS3(presign, file);
-            await registerUploadOnBackend({
-                objectKey: presign.object_key,
-                file,
-                imageCount,
-                expectedPoints
-            });
-
-            if (widget) {
-                widget.onUploadFinished();
-            }
-        } catch (err) {
-            console.error(err);
-            alert("파일 업로드 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
-
-            // 에러라도, 더 이상 진행 중인 업로드가 아니므로 slot 정리
-            if (widget) {
-                widget.onUploadFinished();
-            }
-        }
-    };
 
     // --- Event Listeners ---
+
     // 1. Drag & Drop on Drop Zone
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         dropArea.addEventListener(eventName, (e) => {
@@ -580,37 +472,16 @@ function setupZipUpload(uploadWidget) {
         handleFiles(this.files);
     });
 
-    // 3. Submit (presigned S3 업로드 + 비동기 처리)
-    form.addEventListener("submit", (event) => {
-        event.preventDefault();
-
-        if (!zipInput.files || zipInput.files.length === 0) {
-            alert("먼저 ZIP 파일을 선택해 주세요.");
-            return;
-        }
-
-        const file = zipInput.files[0];
-
-        if (!file.name.toLowerCase().endsWith(".zip")) {
-            alert("ZIP 파일(.zip)만 업로드 가능합니다.");
-            return;
-        }
-
-        if (lastImageCount === 0) {
-            alert("이미지 개수가 0장인 ZIP 파일은 업로드할 수 없습니다.");
-            return;
-        }
-
-        const expectedPoints = lastImageCount * 2;
-
-        // 비동기 presigned 업로드 시작 (fire-and-forget)
-        void startPresignedUpload({
-            file,
-            imageCount: lastImageCount,
-            expectedPoints
-        });
-
-        // 사용자는 바로 다음 파일을 선택할 수 있도록 UI 초기화
-        resetUI();
+    // 3. Submit
+    form.addEventListener('submit', () => {
+        // Create Loading Overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'loading-overlay';
+        overlay.innerHTML = `
+            <div class="spinner-sm" style="border-width:4px; width:50px; height:50px;"></div>
+            <h3>데이터 업로드 및 분석 중...</h3>
+            <p>잠시만 기다려주세요.</p>
+        `;
+        document.body.appendChild(overlay);
     });
 }
