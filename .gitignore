@@ -211,3 +211,5 @@ staticfiles/
 staticfiles.json
 # Windows/Zone metadata files
 *Zone.Identifier*
+
+media/iolm/zips

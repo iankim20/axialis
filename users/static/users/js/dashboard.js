@@ -137,6 +137,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             row.removeAttribute("data-status-url");
             row.classList.remove("job-pending");
+
+            // 더 이상 진행 중인 job이 없다면 밈 박스 숨김
+            const memeBox = document.getElementById("dashboard-meme-box");
+            if (memeBox && !document.querySelector("tr[data-status-url]")) {
+                memeBox.classList.add("hidden");
+            }
             return;
         }
 
