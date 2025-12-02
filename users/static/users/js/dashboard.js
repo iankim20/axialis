@@ -238,6 +238,81 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!confirm("정말 탈퇴하시겠습니까?\n모든 데이터가 영구 삭제됩니다.")) e.preventDefault();
         });
     }
+
+    // ===============================================
+    // 5. Dashboard Meme Box Logic (New)
+    // ===============================================
+    const setupDashboardMeme = () => {
+        const memeBox = document.getElementById("dashboard-meme-box");
+        const phraseEl = document.getElementById("dashboard-meme-text");
+
+        // "처리 중(processing)" 또는 "대기(pending)" 상태인 작업이 있는지 확인
+        // pendingRows는 상단에서 이미 정의됨 (tr[data-status-url])
+        const hasActiveJobs = pendingRows.length > 0;
+
+        if (!memeBox || !phraseEl) return;
+
+        if (!hasActiveJobs) {
+            memeBox.classList.add("hidden");
+            return;
+        }
+
+        // 작업이 있으면 박스 표시
+        memeBox.classList.remove("hidden");
+
+        const phrases = [
+            "AI 모델이 데이터를 정밀 추출 중입니다...",
+            "백내장 수술의 성공을 기원합니다 🙏",
+            "잠시 눈을 쉬게 해주세요. 모니터에서 멀어지세요 🌳",
+            "IOLMaster 결과를 추출하여 엑셀로 정리해드립니다 🎁",
+            "지금 이 순간에도 데이터는 안전하게 처리되고 있습니다.",
+            "환자분들의 밝은 세상을 위해 노력하시느라 고생 많으십니다.",
+            "데이터 추출 시간을 획기적으로 줄여드릴게요 ⚡",
+            "세상에서 가장 동그란 CCC 그리는 중... ⭕",
+            "슬릿램프 보느라 굽은 등, 잠시 기지개 켜세요 🧘‍♂️",
+            "초음파 에너지(CDE) 최소로 쓰는 하루 되세요 📉",
+            "Toric IOL 축 돌아가지 않게 기원하는 중... ",
+            "Emmetropia 기원하는 중....",
+            "난시 0 디옵터 간절히 비는 중...",
+            "Endophthalmitis 발생 가능성 낮추는 중...",
+            "환자 coop 올리는 중...",
+            "Posterior Capsule 단단하게 만드는 중...",
+            "동공 100% 산동 대기 중...",
+            "Zonule 튼튼하게 연결하는 중...",
+            "각막 부종 빼는 중...",
+            "각막혼탁 없애는 중...",
+            "Anterior Chamber 유지하는 중...",
+            "각막내피 튼튼하게 만드는 중...",
+            "Anterior Capsule Tension 낮추는 중...",
+            "CME 발생 가능성 낮추는 중..."
+        ];
+
+        let currentIdx = Math.floor(Math.random() * phrases.length);
+        phraseEl.textContent = phrases[currentIdx];
+
+        // 10초(10000ms) 간격으로 변경
+        setInterval(() => {
+            let nextIdx;
+            // 중복 방지 랜덤
+            do {
+                nextIdx = Math.floor(Math.random() * phrases.length);
+            } while (nextIdx === currentIdx && phrases.length > 1);
+
+            currentIdx = nextIdx;
+
+            // 텍스트 교체 시 페이드 효과를 위해 클래스 재적용 (선택 사항)
+            phraseEl.classList.remove("meme-dynamic");
+            void phraseEl.offsetWidth; // trigger reflow
+            phraseEl.classList.add("meme-dynamic");
+
+            phraseEl.textContent = phrases[currentIdx];
+        }, 10000);
+    };
+
+    // 실행
+    setupDashboardMeme();
+
+
     window.addEventListener("pageshow", (event) => {
         const navEntries = performance.getEntriesByType("navigation");
         const navType = navEntries && navEntries[0] ? navEntries[0].type : null;

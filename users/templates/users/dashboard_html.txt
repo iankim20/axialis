@@ -92,10 +92,27 @@
       <!-- Main Content -->
       <section class="content">
         <header class="content-header">
-          <div>
+          <div class="header-left">
             <h1 class="content-title">IOLM 작업 내역</h1>
             <p class="content-subtitle">최근 분석 작업 내역 및 결과 파일을 확인할 수 있습니다.</p>
           </div> 
+          
+          <div id="dashboard-meme-box" class="meme-box hidden">
+            <div class="meme-content-wrapper"><div class="meme-icon">☕</div>
+              <div class="meme-text-group">
+                <p class="meme-main-msg">
+                  페이지를 로그아웃하셔도 분석은 계속 진행됩니다.
+                </p>
+                <p class="meme-sub-msg">
+                  창을 닫고 커피 한잔 하셔도 좋습니다.
+                </p>
+                
+                <div class="meme-divider"></div>
+                <p id="dashboard-meme-text" class="meme-dynamic">
+                  </p>
+              </div>
+            </div>
+          </div>
         </header>
 
         <!-- [요청 3] 테이블 너비 축소는 CSS .jobs-table-container에서 처리 -->
@@ -117,155 +134,175 @@
               </thead>
               <tbody>
                 {% if jobs %}
-                {% for job in jobs %}
-                <tr
-                  class="job-row {% if job.status == 'completed' %}job-completed{% elif job.status == 'failed' %}job-failed{% else %}job-pending{% endif %}"
-                  {% if job.status == 'pending' or job.status == 'processing' %} data-job-id="{{ job.id }}"
-                  data-status-url="{% url 'iolm:upload_job_status' job.pk %}" {% endif %}>
+                  {% with page_offset=page_obj.start_index|add:"-1" %}
+                    {% for job in jobs %}
+                    <tr
+                      class="job-row {% if job.status == 'completed' %}job-completed{% elif job.status == 'failed' %}job-failed{% else %}job-pending{% endif %}"
+                      {% if job.status == 'pending' or job.status == 'processing' %} data-job-id="{{ job.id }}"
+                      data-status-url="{% url 'iolm:upload_job_status' job.pk %}" {% endif %}>
 
-                  <!-- 1. Numbering -->
-                  <td class="col-id">{{ forloop.counter }}</td>
+                      <!-- 1. Numbering -->
+                      <td class="col-id">
+                        {{ page_offset|add:forloop.counter }}
+                      </td>
 
-                  <!-- 2. Uploaded At (줄바꿈 & 중앙 정렬) -->
-                  <td class="col-date-start center-align">
-                    <div class="date-box">
-                      <span class="date-ymd" data-utc="{{ job.created_at|date:'c' }}" data-format="date">
-                        {{ job.created_at|date:"Y-m-d" }}
-                      </span>
-                      <span class="date-time" data-utc="{{ job.created_at|date:'c' }}" data-format="time">
-                        {{ job.created_at|date:"H:i" }}
-                      </span>
-                    </div>
-                  </td>
+                      <!-- 2. Uploaded At (줄바꿈 & 중앙 정렬) -->
+                      <td class="col-date-start center-align">
+                        <div class="date-box">
+                          <span class="date-ymd" data-utc="{{ job.created_at|date:'c' }}" data-format="date">
+                            {{ job.created_at|date:"Y-m-d" }}
+                          </span>
+                          <span class="date-time" data-utc="{{ job.created_at|date:'c' }}" data-format="time">
+                            {{ job.created_at|date:"H:i" }}
+                          </span>
+                        </div>
+                      </td>
 
-                  <!-- 3. Status -->
-                  <td class="col-status status-cell">
-                    {% if job.status == "completed" %}
-                    <span class="badge badge-success">완료</span>
-                    <div class="status-time">소요: {{ job.process_time_display|default:"-" }}</div>
-                    {% elif job.status == "failed" %}
-                    <span class="badge badge-danger">실패</span>
-                    <div class="status-time">시스템 오류</div>
-                    {% else %}
-                    <span class="badge badge-processing">
-                      <div class="spinner"></div> 처리 중
-                    </span>
-                    <div class="status-time">분석 진행 중...</div>
-                    {% endif %}
-                  </td>
+                      <!-- 3. Status -->
+                      <td class="col-status status-cell">
+                        {% if job.status == "completed" %}
+                        <span class="badge badge-success">완료</span>
+                        <div class="status-time">소요: {{ job.process_time_display|default:"-" }}</div>
+                        {% elif job.status == "failed" %}
+                        <span class="badge badge-danger">실패</span>
+                        <div class="status-time">시스템 오류</div>
+                        {% else %}
+                        <span class="badge badge-processing">
+                          <div class="spinner"></div> 처리 중
+                        </span>
+                        <div class="status-time">분석 진행 중...</div>
+                        {% endif %}
+                      </td>
 
-                  <!-- 4. Progress (Narrow) -->
-                  <td class="col-progress progress-cell">
-                    <div class="progress-track">
-                      <div class="progress-fill {% if job.status == 'failed' %}progress-fill-failed{% endif %}"
-                        style="width: {{ job.progress_percent }}%;" data-progress-fill></div>
-                    </div>
-                    <div class="progress-text" data-progress-text>
-                      {% if job.num_images %}
-                      {{ job.progress_percent }}% ({{ job.processed_images }}/{{ job.num_images }})
-                      {% else %}
-                      대기 중...
-                      {% endif %}
-                    </div>
-                  </td>
+                      <!-- 4. Progress (Narrow) -->
+                      <td class="col-progress progress-cell">
+                        <div class="progress-track">
+                          <div class="progress-fill {% if job.status == 'failed' %}progress-fill-failed{% endif %}"
+                            style="width: {{ job.progress_percent }}%;" data-progress-fill></div>
+                        </div>
+                        <div class="progress-text" data-progress-text>
+                          {% if job.num_images %}
+                          {{ job.progress_percent }}% ({{ job.processed_images }}/{{ job.num_images }})
+                          {% else %}
+                          대기 중...
+                          {% endif %}
+                        </div>
+                      </td>
 
-                  <!-- 5. Completed At (NEW, 줄바꿈 & 중앙 정렬) -->
-                  <td class="col-date-end center-align">
-                    {% if job.completed_at %}
-                    <div class="date-box">
-                      <span class="date-ymd" data-utc="{{ job.completed_at|date:'c' }}" data-format="date">
-                        {{ job.completed_at|date:"Y-m-d" }}
-                      </span>
-                      <span class="date-time" data-utc="{{ job.completed_at|date:'c' }}" data-format="time">
-                        {{ job.completed_at|date:"H:i" }}
-                      </span>
-                    </div>
-                    {% else %}
-                    <span class="text-muted">-</span>
-                    {% endif %}
-                  </td>
+                      <!-- 5. Completed At (NEW, 줄바꿈 & 중앙 정렬) -->
+                      <td class="col-date-end center-align">
+                        {% if job.completed_at %}
+                        <div class="date-box">
+                          <span class="date-ymd" data-utc="{{ job.completed_at|date:'c' }}" data-format="date">
+                            {{ job.completed_at|date:"Y-m-d" }}
+                          </span>
+                          <span class="date-time" data-utc="{{ job.completed_at|date:'c' }}" data-format="time">
+                            {{ job.completed_at|date:"H:i" }}
+                          </span>
+                        </div>
+                        {% else %}
+                        <span class="text-muted">-</span>
+                        {% endif %}
+                      </td>
 
-                  <!-- 6. Result File (Excel Icon, Always Blue Link) -->
-                  <td class="col-file">
-                    {% if job.result_file %}
-                      <div class="file-cell">
+                      <!-- 6. Result File (Excel Icon, Always Blue Link) -->
+                      <td class="col-file">
+                        {# 정상 완료 #}
+                        {% if job.status == "completed" and job.download_url %}
+                          <a href="{{ job.download_url }}" class="file-link" data-download-url="{{ job.download_url }}">
+                            <!-- Excel Icon SVG -->
+                            <svg class="file-icon-excel" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2ZM16 18H13V15H16V18ZM16 13H13V10H16V13ZM13 8V4L17 8H13Z"/>
+                            </svg>
+                            <span
+                              class="file-name"
+                              data-utc="{{ job.completed_at|date:'c' }}"
+                              data-format="filename"
+                              data-eyes="{{ job.num_eyes|default_if_none:'' }}"
+                            >
+                              {{ job.filename_display }}
+                            </span>
+                          </a>
+
+                        {# soft limit 등으로 FAILED지만 partial 결과가 있는 경우 #}
+                        {% elif job.status == "failed" and job.download_url %}
+                          <div class="file-partial-wrapper">
+                            <span
+                              class="info-icon"
+                              data-tooltip="서버 부하로 인해 작업이 도중에 중단되었지만, 완료된 부분까지는 엑셀 파일로 저장되었습니다. 필요 시 관리자에게 문의해 주세요."
+                            >
+                              i
+                            </span>
+                            <a href="{{ job.download_url }}" class="file-link" data-download-url="{{ job.download_url }}">
+                              <!-- Excel Icon SVG (위와 동일) -->
+                              <svg class="file-icon-excel" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6C4.9 2 4 2.9 4 20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2ZM16 18H13V15H16V18ZM16 13H13V10H16V13ZM13 8V4L17 8H13Z"/>
+                              </svg>
+                              <span
+                                class="file-name"
+                                data-utc="{{ job.completed_at|date:'c' }}"
+                                data-format="filename"
+                                data-eyes="{{ job.num_eyes|default_if_none:'' }}"
+                              >
+                                {{ job.filename_display }}
+                              </span>
+                            </a>
+                          </div>
+
+                        {% else %}
+                          <span class="text-muted">-</span>
+                        {% endif %}
+                      </td>
+
+
+
+
+                      <!-- 6. Result File (Excel Icon, Always Blue Link) -->
+                      {% comment %} <td class="col-file">
+                        {% if job.status == "completed" %}
                         <a href="{{ job.download_url }}" class="file-link" data-download-url="{{ job.download_url }}">
-                          <!-- Excel Icon SVG 그대로 유지 -->
-                          <svg class="file-icon-excel" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2ZM16 18H13V15H16V18ZM16 13H13V10H16V13ZM13 8V4L17 8H13Z"/>
+                          <!-- Excel Icon SVG -->
+                          <svg class="file-icon-excel" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path
+                              d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2ZM16 18H13V15H16V18ZM16 13H13V10H16V13ZM13 8V4L17 8H13Z" />
                           </svg>
-                          <span
-                            class="file-name"
-                            data-utc="{{ job.completed_at|date:'c' }}"
-                            data-format="filename"
-                            data-eyes="{{ job.num_eyes|default_if_none:'' }}"
-                          >
+                          <span class="file-name" data-utc="{{ job.completed_at|date:'c' }}" data-format="filename"
+                            data-eyes="{{ job.num_eyes|default_if_none:'' }}">
                             {{ job.filename_display }}
                           </span>
                         </a>
-
-                        {# ✅ 실패 + 결과파일이 있는 경우 안내 아이콘 #}
-                        {% if job.status == "failed" %}
-                          <span
-                            class="file-info-icon"
-                            title="서버 부하로 인해 작업이 도중에 중단되었지만, 완료된 부분까지는 엑셀 파일로 저장되었습니다. 필요 시 관리자에게 문의해 주세요."
-                          >
-                            i
-                          </span>
+                        {% else %}
+                        <span class="text-muted">-</span>
                         {% endif %}
-                      </div>
-                    {% else %}
-                      <span class="text-muted">-</span>
-                    {% endif %}
-                  </td>
+                      </td> {% endcomment %}
 
+                      <!-- 7. Download (Blue Icon) -->
+                      <td class="col-download center-align">
+                        {% if job.result_file %}
+                          <a href="{{ job.download_url }}" class="btn-icon btn-download-blue" title="다운로드">
+                            ⬇
+                          </a>
+                        {% else %}
+                        -
+                        {% endif %}
+                      </td>
 
-
-                  <!-- 6. Result File (Excel Icon, Always Blue Link) -->
-                  {% comment %} <td class="col-file">
-                    {% if job.status == "completed" %}
-                    <a href="{{ job.download_url }}" class="file-link" data-download-url="{{ job.download_url }}">
-                      <!-- Excel Icon SVG -->
-                      <svg class="file-icon-excel" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                        fill="currentColor">
-                        <path
-                          d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2ZM16 18H13V15H16V18ZM16 13H13V10H16V13ZM13 8V4L17 8H13Z" />
-                      </svg>
-                      <span class="file-name" data-utc="{{ job.completed_at|date:'c' }}" data-format="filename"
-                        data-eyes="{{ job.num_eyes|default_if_none:'' }}">
-                        {{ job.filename_display }}
-                      </span>
-                    </a>
-                    {% else %}
-                    <span class="text-muted">-</span>
-                    {% endif %}
-                  </td> {% endcomment %}
-
-                  <!-- 7. Download (Blue Icon) -->
-                  <td class="col-download center-align">
-                    {% if job.result_file %}
-                      <a href="{{ job.download_url }}" class="btn-icon btn-download-blue" title="다운로드">
-                        ⬇
-                      </a>
-                    {% else %}
-                    -
-                    {% endif %}
-                  </td>
-
-                  <!-- 8. Delete (Red Trashcan) -->
-                  <td class="col-delete center-align">
-                    <button type="button" class="btn-icon btn-delete-red" title="삭제"
-                      data-delete-url="{{ job.delete_url }}">
-                      <!-- Trashcan SVG -->
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                      </svg>
-                    </button>
-                  </td>
-                </tr>
-                {% endfor %}
+                      <!-- 8. Delete (Red Trashcan) -->
+                      <td class="col-delete center-align">
+                        <button type="button" class="btn-icon btn-delete-red" title="삭제"
+                          data-delete-url="{{ job.delete_url }}">
+                          <!-- Trashcan SVG -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  {% endwith %}
                 {% else %}
                 <tr>
                   <td colspan="8" class="empty-state">작업 내역이 없습니다.</td>

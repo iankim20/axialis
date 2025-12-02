@@ -36,6 +36,7 @@ Task: read the text and return this JSON ONLY:
   "ptnt_dob": "",
   "ptnt_sex": "",
   "ptnt_id": "",
+  "hospital": "",
   "exam_date": ""
 }
 
@@ -44,6 +45,7 @@ Rules:
 - ptnt_dob: text near “생년월일” or “Date of Birth”. Keep the visible format.
 - ptnt_sex: map “남”→"M", “여”→"F". If unclear, return "".
 - ptnt_id: text near “환자 ID” or “Patient ID”.
+- hospital: visible clinic or hospital name/logo (e.g., upper-right clinic name).
 
 - exam_date:
   - The clinical exam / measurement date for this IOL biometry.
@@ -130,9 +132,10 @@ PTNT_INFO_SCHEMA: Dict[str, Any] = {
         "ptnt_dob":    {"type": "string"},
         "ptnt_sex":    {"type": "string"},
         "ptnt_id":     {"type": "string"},
+        "hospital":    {"type": "string"},
         "exam_date":   {"type": "string"},
     },
-    "required": ["ptnt_name", "ptnt_dob", "ptnt_sex", "ptnt_id", "exam_date"],
+    "required": ["ptnt_name", "ptnt_dob", "ptnt_sex", "ptnt_id", "hospital", "exam_date"],
     "additionalProperties": False,
 }
 

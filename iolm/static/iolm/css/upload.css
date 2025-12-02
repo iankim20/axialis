@@ -347,6 +347,9 @@ body {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     text-align: center; transition: background 0.2s;
     cursor: pointer;
+    user-select: none;          /* 텍스트가 드래그되어 파랗게 선택되는 것 방지 */
+    -webkit-user-select: none;  /* 사파리/크롬 호환성 */
+    caret-color: transparent;   /* 포커스가 잡혀도 깜빡이는 커서(caret)를 투명하게 처리 */
 }
 .drop-zone:hover, .drop-zone.drag-over { background: #eff6ff; }
 .icon-cloud-upload { color: var(--primary-color); margin-bottom: 16px; }
@@ -516,205 +519,151 @@ body {
 }
 
 
-.upload-status-widget {
-  position: fixed;
-  right: 24px;
-  bottom: 110px; /* promo-toast 위에 뜨도록 살짝 위로 */
-  z-index: 1200;
-  width: 320px;
-  max-width: calc(100vw - 32px);
-  font-family: inherit;
-  color: #0f172a;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.22);
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  overflow: hidden;
-  transform: translateY(16px);
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    opacity 0.25s ease-out,
-    transform 0.25s ease-out,
-    box-shadow 0.25s ease-out;
+/* 배경 (Backdrop) */
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.75); /* 짙은 남색 배경 */
+    backdrop-filter: blur(5px);
 }
 
-.upload-status-widget--visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+/* 메인 패널 (White Card for Medical Look) */
+.upload-loading-panel {
+    width: 90%;
+    max-width: 500px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 40px 30px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border-top: 6px solid var(--primary-color); /* 상단 파란색 포인트 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    animation: slideUp 0.3s ease-out;
 }
 
-.upload-status-widget--hidden {
-  opacity: 0;
-  transform: translateY(16px);
-  pointer-events: none;
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* 상단 의료 느낌의 컬러 스트립 */
-.upload-status-strip {
-  height: 4px;
-  background: linear-gradient(90deg, #2563eb, #0ea5e9, #22c55e);
+/* 1. 헤더 & 스피너 */
+.upload-header {
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
 }
 
-.upload-status-inner {
-  padding: 14px 16px 14px 16px;
+.spinner-lg {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #e2e8f0;
+    border-top-color: var(--primary-color); /* 파란색 스피너 */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
 
-.upload-status-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 6px;
+.upload-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-main);
+    word-break: keep-all; /* 긴 제목 줄바꿈 자연스럽게 */
 }
 
-.upload-status-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.warning-text {
+    margin: 8px 0 0 0;
+    font-size: 1.05rem;
+    color: #ef4444; /* 경고용 붉은색 */
+    font-weight: 500;
+    background: #fef2f2; /* 아주 연한 붉은 배경 */
+    padding: 6px 12px;
+    border-radius: 6px;
+    display: inline-block;
 }
 
-.upload-status-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+/* 2. 밈 텍스트 (가장 중요) */
+.meme-container {
+    width: 100%;
+    min-height: 80px; /* 텍스트 줄바꿈 되어도 레이아웃 유지 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
 }
 
-.upload-status-chip.pending {
-  background: rgba(37, 99, 235, 0.08);
-  color: #1d4ed8;
+.meme-text {
+    margin: 0;
+    font-size: 1.7rem; /* 폰트 크기 대폭 확대 */
+    font-weight: 600;
+    color: var(--primary-color);
+    line-height: 1.4;
+    word-break: keep-all; /* 단어 단위 줄바꿈 */
+    animation: fadeInText 0.5s ease;
 }
 
-.upload-status-chip.complete {
-  background: rgba(34, 197, 94, 0.08);
-  color: #16a34a;
+@keyframes fadeInText {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.upload-status-close {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9rem;
-  color: #64748b;
-  transition:
-    background-color 0.15s ease-out,
-    color 0.15s ease-out;
+/* 3. 프로그레스 바 */
+.upload-progress-container {
+    width: 100%;
+    background: #f8fafc;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
 }
 
-.upload-status-close:hover {
-  background-color: rgba(148, 163, 184, 0.18);
-  color: #0f172a;
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--text-sub);
+    font-weight: 500;
 }
 
-/* pending 상태에서는 닫기 버튼 비활성 */
-.upload-status-close.hidden {
-  opacity: 0;
-  pointer-events: none;
+.file-info {
+    max-width: 70%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.upload-status-body {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 0.8rem;
-  line-height: 1.4;
+.percent-text {
+    color: var(--primary-color);
+    font-weight: 700;
 }
 
-.upload-status-main-text {
-  color: #0f172a;
+.progress-track {
+    width: 100%;
+    height: 10px;
+    background-color: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 6px;
 }
 
-.upload-status-meta {
-  color: #4b5563;
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--primary-color), #60a5fa);
+    border-radius: 10px;
+    transition: width 0.2s ease;
 }
 
-.upload-status-warning {
-  margin-top: 4px;
-  font-size: 0.78rem;
-  color: #b91c1c;
-  font-weight: 500;
-}
-
-/* 아이콘 / 스피너 영역 */
-.upload-status-icon-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.upload-status-icon-circle {
-  width: 26px;
-  height: 26px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.upload-status-icon-circle.pending {
-  background: rgba(37, 99, 235, 0.1);
-}
-
-.upload-status-icon-circle.complete {
-  background: rgba(34, 197, 94, 0.12);
-}
-
-/* 체크 표시 */
-.upload-status-check {
-  width: 15px;
-  height: 15px;
-  border-radius: 999px;
-  border: 2px solid #16a34a;
-  position: relative;
-}
-
-.upload-status-check::after {
-  content: "";
-  position: absolute;
-  left: 3px;
-  top: 4px;
-  width: 6px;
-  height: 3px;
-  border-left: 2px solid #16a34a;
-  border-bottom: 2px solid #16a34a;
-  transform: rotate(-45deg);
-}
-
-/* 기존 spinner-sm 재사용 + 크기만 조절 */
-.upload-status-spinner {
-  width: 18px;
-  height: 18px;
-}
-
-/* 완료 시 살짝 튀어오르는 애니메이션 */
-@keyframes uploadWidgetPop {
-  0% {
-    transform: translateY(8px) scale(0.96);
-    box-shadow: 0 8px 24px rgba(22, 163, 74, 0.18);
-  }
-  60% {
-    transform: translateY(0) scale(1.02);
-    box-shadow: 0 20px 50px rgba(22, 163, 74, 0.28);
-  }
-  100% {
-    transform: translateY(0) scale(1);
-    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.24);
-  }
-}
-
-.upload-status-widget--pulse {
-  animation: uploadWidgetPop 0.55s ease-out;
+.progress-bytes {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    text-align: right;
 }

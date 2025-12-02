@@ -100,7 +100,7 @@ body {
    Dashboard Layout
    ========================================= */
 .dashboard {
-  padding: 32px 24px 60px;
+  padding: 28px 24px 60px;
 }
 
 .dashboard-inner {
@@ -220,7 +220,6 @@ body {
 /* =========================================
    Main Content
    ========================================= */
-.content-header { margin-bottom: 24px; }
 .content-title { font-size: 24px; font-weight: 700; color: #0f172a; margin: 0 0 6px 0; }
 .content-subtitle { font-size: 14px; color: #64748b; margin: 0; }
 
@@ -242,6 +241,127 @@ body {
   border-collapse: collapse;
   min-width:600px;
 }
+
+.content-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end; /* 아래 라인 맞춤 */
+  gap: 20px;
+  flex-wrap: wrap; /* 모바일 대응 */
+}
+
+.header-left {
+  flex: 1;
+  min-width: 200px;
+}
+
+.content-title { font-size: 24px; font-weight: 700; color: #0f172a; margin: 0 0 6px 0; }
+.content-subtitle { font-size: 14px; color: #64748b; margin: 0; }
+
+.meme-box {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #2563eb;
+  border-radius: 12px;
+  /* [수정] 높이 축소를 위해 상하 패딩을 10px로 줄임 */
+  padding: 10px 18px; 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  max-width: 500px;
+  min-width: 320px;
+  animation: slideIn 0.5s ease-out;
+  display: block;
+}
+
+/* Hidden 처리 */
+.meme-box.hidden { display: none !important; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.meme-content-wrapper {
+  display: flex;
+  align-items: flex-start; /* 텍스트 많아질 수 있으므로 상단 정렬 */
+  gap: 14px;
+}
+
+.meme-icon {
+  font-size: 28px;
+  background: #eff6ff;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px; /* 텍스트 줄맞춤 보정 */
+}
+
+.meme-text-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.meme-static {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* 1. Main Text 스타일 (강조) */
+.meme-main-msg {
+  margin: 0 0 2px 0; /* 아래 간격 최소화 */
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b; /* 진한 텍스트 */
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+/* 2. Sub Text 스타일 (부드럽게) */
+.meme-sub-msg {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b; /* 연한 텍스트 */
+  font-weight: 500;
+}
+
+.meme-divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 6px 0;
+  width: 100%;
+}
+
+.meme-dynamic {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #2563eb; /* Blue highlight */
+  animation: textFadeIn 0.5s ease;
+  min-height: 1.4em; /* 높이 고정 */
+}
+
+@keyframes textFadeIn {
+  from { opacity: 0; transform: translateX(5px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@media (max-width: 768px) {
+  .content-header { flex-direction: column; align-items: flex-start; }
+  .meme-box { width: 100%; max-width: 100%; }
+}
+
+
+
+
+
 
 /* Header */
 .jobs-table th {

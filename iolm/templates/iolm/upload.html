@@ -194,8 +194,16 @@
 
         <!-- 왼쪽: 업로드 패널 -->
         <div class="upload-main">
-          <form id="zip-upload-form" method="post" enctype="multipart/form-data" action="{% url 'iolm:upload_zip' %}"
-            data-max-size="{{ max_size_bytes }}">
+          <form
+            id="zip-upload-form"
+            method="post"
+            enctype="multipart/form-data"
+            action="{% url 'iolm:upload_zip' %}"
+            data-max-size="{{ max_size_bytes }}"
+            data-presign-url="{% url 'iolm:upload_presign' %}"
+            data-register-url="{% url 'iolm:upload_register' %}"
+            data-dashboard-url="{% url 'users:dashboard' %}"
+          >
             {% csrf_token %}
 
             <div class="upload-card">
@@ -256,7 +264,7 @@
                     파일 탐색기 열기
                   </button>
 
-                  <button type="submit" id="btn-analyze" class="btn-analyze" disabled>
+                  <button type="button" id="btn-analyze" class="btn-analyze" disabled>
                     분석 시작하기
                   </button>
                 </div>
@@ -366,7 +374,7 @@
             <span>ptnt_dob (생년월일)</span>
             <span>ptnt_sex</span>
             <span>ptnt_id (차트번호)</span>
-            <span>hospital</span>
+            {% comment %} <span>hospital</span> {% endcomment %}
             <span>exam_date (검사일)</span>
           </div>
         </div>

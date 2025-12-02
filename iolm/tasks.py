@@ -66,7 +66,7 @@ def run_ocr_for_image(image_path: str) -> Tuple[List[Dict[str, Any]], Dict[str, 
             "ptnt_dob": ptnt.get("ptnt_dob", ""),
             "ptnt_sex": ptnt.get("ptnt_sex", ""),
             "ptnt_id": ptnt.get("ptnt_id", ""),
-            "hospital": ptnt.get("hospital", ""),
+            # "hospital": ptnt.get("hospital", ""),
             "exam_date": ptnt.get("exam_date", ""),
             # eye별 biometry
             "eye": eye_data.get("eye", ""),
@@ -122,7 +122,6 @@ def _fix_korean_zip_name(name: str) -> str:
         return raw.decode("cp949")
     except UnicodeError:
         return name
-
 
 
 def _extract_zip_images(field_file, tmpdir: str) -> List[str]:

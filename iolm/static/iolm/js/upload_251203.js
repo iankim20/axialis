@@ -167,6 +167,7 @@ function setupZipUpload() {
         imageCountEl.textContent = "이미지 없음 (0장)";
         fileNameEl.textContent = "-";
         fileSizeEl.textContent = "-";
+        analyzeBtn.disabled = true;
     };
 
     // State 2: File Loaded
@@ -254,41 +255,39 @@ function setupZipUpload() {
         analyzeZip(file);
     };
 
-    /* upload.js 내부의 createUploadOverlay 함수 교체 */
-
-    /* upload.js 내부의 createUploadOverlay 함수 전체 교체 */
-
     const createUploadOverlay = (file) => {
         const overlay = document.createElement("div");
         overlay.className = "loading-overlay";
 
         overlay.innerHTML = `
             <div class="upload-loading-panel">
-                <div class="upload-header">
+                <div class="upload-loading-header">
+                    <div class="upload-loading-icon">👁️‍🗨️</div>
+                    <div class="upload-loading-header-text">
+                        <h3>제출한 ZIP 파일을 AI 모델과 연결 중입니다...</h3>
+                        <p>완료 시까지 <strong>절대 창을 닫지 마세요.</strong></p>
+                    </div>
                     <div class="spinner-lg"></div>
-                    <h3 data-role="status-title">제출한 ZIP 파일을 AI 모델과 연결 중입니다</h3>
-                    <p class="warning-text">
-                        ⚠️ 업로드 완료 시까지 <strong>브라우저 창을 절대 닫지 마세요.</strong>
-                    </p>
                 </div>
-
-                <div class="meme-container">
-                    <p class="meme-text" data-role="phrase-text">
-                        AI 모델 연결 대기 중...
-                    </p>
+                <div class="upload-progress-section">
+                    <div class="upload-progress-meta">
+                        <span class="file-name">${file.name}</span>
+                        <span class="file-size">${formatSize(file.size)}</span>
+                    </div>
+                    <div class="upload-progress-bar">
+                        <div class="upload-progress-bar-inner" data-role="progress-bar"></div>
+                    </div>
+                    <div class="upload-progress-stats">
+                        <span class="upload-progress-percent" data-role="progress-percent">0%</span>
+                        <span class="upload-progress-bytes" data-role="progress-bytes">0 / ${formatSize(file.size)}</span>
+                    </div>
                 </div>
-
-                <div class="upload-progress-container">
-                    <div class="progress-labels">
-                        <span class="file-info">${file.name}</span>
-                        <span class="percent-text" data-role="progress-percent">0%</span>
-                    </div>
-                    <div class="progress-track">
-                        <div class="progress-fill" data-role="progress-bar"></div>
-                    </div>
-                    <div class="progress-bytes" data-role="progress-bytes">
-                        0 / ${formatSize(file.size)}
-                    </div>
+                <div class="upload-loading-phrase">
+                    <span data-role="phrase-text">Emmetropia 기원하는 중....</span>
+                </div>
+                <div class="upload-loading-footer" data-role="completed-footer" hidden>
+                    <span>AI 모델과의 연결이 완료되었습니다. 이제 창을 닫으셔도 괜찮습니다.</span>
+                    <button type="button" class="btn-primary" data-role="close-overlay">확인</button>
                 </div>
             </div>
         `;
@@ -299,25 +298,23 @@ function setupZipUpload() {
         const percentEl = overlay.querySelector('[data-role="progress-percent"]');
         const bytesEl = overlay.querySelector('[data-role="progress-bytes"]');
         const phraseEl = overlay.querySelector('[data-role="phrase-text"]');
-        const titleEl = overlay.querySelector('[data-role="status-title"]');
-        const warningEl = overlay.querySelector('.warning-text'); // 경고 문구 제어용
-        const spinner = overlay.querySelector('.spinner-lg');
+        const footerEl = overlay.querySelector('[data-role="completed-footer"]');
+        const closeBtn = overlay.querySelector('[data-role="close-overlay"]');
+        const titleEl = overlay.querySelector(".upload-loading-header-text h3");
+        const subtitleEl = overlay.querySelector(".upload-loading-header-text p");
 
-        // 1. 처음 뜰 때부터 랜덤으로 시작
-        let currentIdx = Math.floor(Math.random() * overlayPhrases.length);
-        phraseEl.textContent = overlayPhrases[currentIdx];
-
+        let phraseIndex = 0;
         const intervalId = window.setInterval(() => {
-            let nextIdx;
+            phraseIndex = (phraseIndex + 1) % overlayPhrases.length;
+            phraseEl.textContent = overlayPhrases[phraseIndex];
+        }, 7000);
 
-            // 2. 바로 직전에 나온 문구가 또 나오지 않도록 뽑기 (배열이 2개 이상일 때만 유효)
-            do {
-                nextIdx = Math.floor(Math.random() * overlayPhrases.length);
-            } while (nextIdx === currentIdx && overlayPhrases.length > 1);
-
-            currentIdx = nextIdx;
-            phraseEl.textContent = overlayPhrases[currentIdx];
-        }, 5000); // 4초마다 변경
+        if (closeBtn) {
+            closeBtn.addEventListener("click", () => {
+                window.clearInterval(intervalId);
+                overlay.remove();
+            });
+        }
 
         const setProgress = (loaded, total) => {
             if (!progressBar || !percentEl || !bytesEl) return;
@@ -330,26 +327,16 @@ function setupZipUpload() {
 
         const markCompleted = () => {
             if (titleEl) {
-                titleEl.textContent = "전송 완료! 분석을 시작합니다.";
-                titleEl.style.color = "var(--primary-color)";
+                titleEl.textContent = "AI 모델과의 연결이 완료되었습니다.";
             }
-            if (warningEl) {
-                // 완료되면 경고 문구를 안내 문구로 부드럽게 변경하거나 숨김
-                warningEl.innerHTML = "잠시 후 대시보드로 이동합니다...";
-                warningEl.style.color = "#64748b"; // 회색으로 변경
-                warningEl.style.fontWeight = "normal";
+            if (subtitleEl) {
+                subtitleEl.textContent = "잠시 후 대시보드로 이동합니다...";
             }
-            if (phraseEl) {
-                phraseEl.textContent = ""; // 밈 문구 제거 혹은 유지
-            }
-            if (spinner) {
-                spinner.style.borderTopColor = "#16a34a";
-                spinner.style.borderRightColor = "#16a34a";
-                spinner.style.borderBottomColor = "#16a34a";
-                spinner.style.borderLeftColor = "#16a34a";
-                spinner.style.animation = "none";
+            if (footerEl) {
+                footerEl.hidden = false;
             }
         };
+
 
         const destroy = () => {
             window.clearInterval(intervalId);
@@ -464,8 +451,8 @@ function setupZipUpload() {
 
             // 업로드 + 등록 완료 후 대시보드로 자동 이동
             setTimeout(() => {
-                window.location.href = form.dataset.dashboardUrl;
-            }, 2000);
+                window.location.href = "/users/dashboard/";
+            }, 1200);
 
         } catch (err) {
             console.error(err);

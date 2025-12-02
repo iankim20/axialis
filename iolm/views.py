@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from typing import Any
+import json
+import boto3
+from botocore.config import Config
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -9,23 +12,21 @@ from django.http import (
     Http404,
     HttpRequest,
     HttpResponse,
+    HttpResponseBadRequest,  
 )
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
-from .models import UploadJob
+from .models import UploadJob, iolm_zip_upload_to
 import os
 from .tasks import process_upload_job   
 from django.conf import settings
 
 from zoneinfo import ZoneInfo
-
 from django.utils import timezone
-import json
-import boto3
-from uuid import uuid4
-from botocore.config import Config
-from django.views.decorators.http import require_POST
+
+
 
 def upload_page(request):
     max_bytes = settings.IOLM_MAX_UPLOAD_BYTES
@@ -77,6 +78,105 @@ def upload_zip(request: HttpRequest) -> HttpResponse:
         "IOLM ZIP 업로드가 접수되었습니다. 작업 진행 상황은 마이페이지에서 확인할 수 있습니다.",
     )
     return redirect("users:dashboard")
+
+@login_required
+@require_POST
+def upload_presign(request: HttpRequest) -> JsonResponse:
+    """
+    브라우저에서 직접 S3로 ZIP을 올리기 위한 presigned POST를 발급한다.
+
+    1) 요청 JSON 검증
+    2) UploadJob 레코드를 미리 하나 만들고 (상태: pending)
+    3) 그 job이 사용할 S3 key로 presigned POST 생성
+    """
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON body"}, status=400)
+
+    filename = (payload.get("filename") or "").strip()
+    size_bytes = int(payload.get("size_bytes") or 0)
+    image_count = int(payload.get("image_count") or 0)
+    expected_points = int(payload.get("expected_points") or 0)  # 현재는 저장 안 함
+
+    if not filename or size_bytes <= 0:
+        return JsonResponse({"error": "filename/size_bytes required"}, status=400)
+
+    max_bytes = settings.IOLM_MAX_UPLOAD_BYTES
+    if size_bytes > max_bytes:
+        max_mb = max_bytes // (1024 * 1024)
+        return JsonResponse(
+            {"error": f"파일 크기는 최대 {max_mb}MB까지 업로드할 수 있습니다."},
+            status=400,
+        )
+
+    # UploadJob 인스턴스를 만들고, zip_file.name 에만 S3 key를 미리 심어둠
+    job = UploadJob(
+        user=request.user,
+        original_filename=filename,
+        status=UploadJob.Status.PENDING,
+        processed_images=0,
+        error_message="",
+    )
+    if image_count > 0:
+        job.num_images = image_count
+
+    # models.iolm_zip_upload_to 와 동일 규칙으로 key 생성
+    key = iolm_zip_upload_to(job, filename)
+    job.zip_file.name = key
+    job.save()
+
+    bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+    region_name = getattr(settings, "AWS_S3_REGION_NAME", None)
+    s3_client = boto3.client("s3", region_name=region_name, config=Config())
+
+    # 10분짜리 presigned POST
+    presigned_post = s3_client.generate_presigned_post(
+        Bucket=bucket_name,
+        Key=key,
+        Fields={
+            "Content-Type": "application/zip",
+        },
+        Conditions=[
+            {"Content-Type": "application/zip"},
+            ["content-length-range", 0, max_bytes],
+        ],
+        ExpiresIn=600,  # 10 minutes
+    )
+
+    return JsonResponse(
+        {
+            "job_id": job.pk,
+            "upload": presigned_post,  # JS에서 upload.url / upload.fields 사용
+        }
+    )
+
+
+@login_required
+@require_POST
+def upload_register(request: HttpRequest) -> JsonResponse:
+    """
+    브라우저 → S3 업로드가 끝난 뒤 호출되는 엔드포인트.
+
+    - job_id 를 받아서 본인 소유 UploadJob 인지 확인
+    - 아직 처리 중이 아니면 Celery task 큐잉
+    """
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON body"}, status=400)
+
+    job_id = payload.get("job_id")
+    if not job_id:
+        return JsonResponse({"error": "job_id required"}, status=400)
+
+    job = get_object_or_404(UploadJob, pk=job_id, user=request.user)
+
+    if job.status == UploadJob.Status.PENDING:
+        process_upload_job.delay(job.pk)
+
+    return JsonResponse({"job_id": job.pk})
+
 
 
 @login_required
