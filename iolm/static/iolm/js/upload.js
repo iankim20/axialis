@@ -268,7 +268,7 @@ function setupZipUpload() {
                     <div class="spinner-lg"></div>
                     <h3 data-role="status-title">제출한 ZIP 파일을 AI 모델과 연결 중입니다</h3>
                     <p class="warning-text">
-                        ⚠️ 업로드 완료 시까지 <strong>브라우저 창을 절대 닫지 마세요.</strong>
+                        ⚠️ 완료 시까지 <strong>브라우저 창을 절대 닫지 마세요.</strong>
                     </p>
                 </div>
 

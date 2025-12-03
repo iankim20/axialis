@@ -136,9 +136,11 @@ def upload_presign(request: HttpRequest) -> JsonResponse:
         Key=key,
         Fields={
             "Content-Type": "application/zip",
+            "x-amz-server-side-encryption": "aws:kms",
         },
         Conditions=[
             {"Content-Type": "application/zip"},
+            {"x-amz-server-side-encryption": "aws:kms"},
             ["content-length-range", 0, max_bytes],
         ],
         ExpiresIn=600,  # 10 minutes

@@ -220,6 +220,7 @@ if USE_S3_MEDIA:
     # 필요하면 캐시 헤더 등도 추가 가능
     AWS_S3_OBJECT_PARAMETERS = {
         "CacheControl": "max-age=86400",
+    "ServerSideEncryption": "aws:kms",
     }
 
     DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"

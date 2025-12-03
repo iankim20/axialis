@@ -101,7 +101,7 @@
             <div class="meme-content-wrapper"><div class="meme-icon">☕</div>
               <div class="meme-text-group">
                 <p class="meme-main-msg">
-                  페이지를 로그아웃하셔도 분석은 계속 진행됩니다.
+                  페이지 로그아웃하셔도 분석은 계속 진행됩니다.
                 </p>
                 <p class="meme-sub-msg">
                   창을 닫고 커피 한잔 하셔도 좋습니다.
