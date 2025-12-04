@@ -31,6 +31,8 @@ logger = logging.getLogger("iolm.tasks")
 
 IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp")
 
+ZIP_RETENTION_DAYS = settings.ZIP_RETENTION_DAYS
+RESULT_RETENTION_DAYS = settings.RESULT_RETENTION_DAYS
 
 # image_path 하나를 받아서
 #  - rows: 엑셀에 들어갈 dict 리스트 (보통 OD/OS 2개 row)
@@ -231,6 +233,7 @@ def process_upload_job(self, job_id: int) -> None:
 
     # ---- 내부 soft-limit(초 단위)를 수동으로 관리 ----
     raw_soft = getattr(settings, "IOLM_TASK_SOFT_LIMIT", None)
+
     try:
         soft_limit = float(raw_soft) if raw_soft is not None else None
     except (TypeError, ValueError):
@@ -425,50 +428,125 @@ def build_excel_in_memory(
 
     return buf.getvalue(), filename
 
-
-
 @shared_task
-def cleanup_old_zips() -> None:
+def cleanup_old_files() -> None:
     """
-    하루 지난 ZIP 파일(iolm/zips)을 S3/로컬에서 정리하는 주기 작업.
+    ZIP / 결과 엑셀 둘 다 정리하는 주기 작업.
 
-    조건:
-    - status = completed
-    - zip_file 이 존재하고 (isnull=False)
-    - zip_deleted_at 이 아직 None
-    - created_at 이 1일 이전
+    - ZIP: completed + 1일 경과, zip_file 존재, zip_deleted_at is null
+    - RESULT: completed + 30일 경과, result_file 존재, result_deleted_at is null
+    실제 파일(S3 객체) 삭제 + deleted_at 타임스탬프 기록만 한다.
     """
-    # cutoff = timezone.now() - timedelta(minutes=1)
-    cutoff = timezone.now() - timedelta(days=1)
+    now = timezone.now()
 
-    qs = UploadJob.objects.filter(
-        status=UploadJob.Status.COMPLETED,
+    zip_cutoff = now - timedelta(days=1)
+    result_cutoff = now - timedelta(days=30)
+
+    eligible_statuses = [
+        UploadJob.Status.COMPLETED,
+        UploadJob.Status.FAILED,
+    ]
+
+    # 1) ZIP 정리
+    zip_qs = UploadJob.objects.filter(
+        status__in=eligible_statuses,
         zip_file__isnull=False,
         zip_deleted_at__isnull=True,
-        created_at__lt=cutoff,
+        created_at__lt=zip_cutoff,
     )
 
     logger.info(
-        "cleanup_old_zips: 대상 job 수 = %s (cutoff=%s)",
-        qs.count(),
-        cutoff.isoformat(),
+        "cleanup_old_files: ZIP 대상 job 수 = %s (cutoff=%s)",
+        zip_qs.count(),
+        zip_cutoff.isoformat(),
     )
 
-    for job in qs.iterator():
+    for job in zip_qs.iterator():
         zip_name = job.zip_file.name
-
-        # S3든 로컬이든 동일한 API: 실제 파일 삭제
-        job.zip_file.delete(save=False)
-
-        # zip_deleted_at만 기록 (필요하면 zip_file 필드까지 비워도 됨)
-        job.zip_deleted_at = timezone.now()
+        job.zip_file.delete(save=False)  # S3 / 로컬에서 실제 ZIP 삭제
+        job.zip_deleted_at = now
         job.save(update_fields=["zip_deleted_at"])
-
         logger.info(
-            "cleanup_old_zips: job=%s zip 삭제 완료 (name=%s)",
+            "cleanup_old_files: ZIP 삭제 완료 job_id=%s name=%s",
             job.id,
             zip_name,
         )
+
+    # 2) RESULT 정리
+    result_qs = UploadJob.objects.filter(
+        status__in=eligible_statuses,
+        result_file__isnull=False,
+        result_deleted_at__isnull=True,
+        completed_at__lt=result_cutoff,
+    )
+
+    logger.info(
+        "cleanup_old_files: RESULT 대상 job 수 = %s (cutoff=%s)",
+        result_qs.count(),
+        result_cutoff.isoformat(),
+    )
+
+    for job in result_qs.iterator():
+        result_name = job.result_file.name
+        job.result_file.delete(save=False)  # S3 / 로컬에서 실제 엑셀 삭제
+        job.result_deleted_at = now
+        job.save(update_fields=["result_deleted_at"])
+
+        logger.info(
+            "cleanup_old_files[results]: job=%s result 삭제/표시 완료 (name=%s)",
+            job.id,
+            result_name,
+        )
+
+
+
+
+
+
+
+
+# @shared_task
+# def cleanup_old_zips() -> None:
+#     """
+#     하루 지난 ZIP 파일(iolm/zips)을 S3/로컬에서 정리하는 주기 작업.
+
+#     조건:
+#     - status = completed
+#     - zip_file 이 존재하고 (isnull=False)
+#     - zip_deleted_at 이 아직 None
+#     - created_at 이 1일 이전
+#     """
+#     # cutoff = timezone.now() - timedelta(minutes=1)
+#     cutoff = timezone.now() - timedelta(days=1)
+
+#     qs = UploadJob.objects.filter(
+#         status=UploadJob.Status.COMPLETED,
+#         zip_file__isnull=False,
+#         zip_deleted_at__isnull=True,
+#         created_at__lt=cutoff,
+#     )
+
+#     logger.info(
+#         "cleanup_old_zips: 대상 job 수 = %s (cutoff=%s)",
+#         qs.count(),
+#         cutoff.isoformat(),
+#     )
+
+#     for job in qs.iterator():
+#         zip_name = job.zip_file.name
+
+#         # S3든 로컬이든 동일한 API: 실제 파일 삭제
+#         job.zip_file.delete(save=False)
+
+#         # zip_deleted_at만 기록 (필요하면 zip_file 필드까지 비워도 됨)
+#         job.zip_deleted_at = timezone.now()
+#         job.save(update_fields=["zip_deleted_at"])
+
+#         logger.info(
+#             "cleanup_old_zips: job=%s zip 삭제 완료 (name=%s)",
+#             job.id,
+#             zip_name,
+#         )
 
 
 

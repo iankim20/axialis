@@ -220,7 +220,7 @@ if USE_S3_MEDIA:
     # 필요하면 캐시 헤더 등도 추가 가능
     AWS_S3_OBJECT_PARAMETERS = {
         "CacheControl": "max-age=86400",
-    "ServerSideEncryption": "aws:kms",
+        "ServerSideEncryption": "aws:kms",
     }
 
     DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
@@ -273,6 +273,10 @@ CELERY_WORKER_REDIRECT_STDOUTS_LEVEL = "INFO"  # print 도 INFO 로 취급
 
 # Django LOGGING 을 그대로 쓰고 싶으면 추천
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
+
+ZIP_RETENTION_DAYS = int(os.getenv("ZIP_RETENTION_DAYS", "1"))
+RESULT_RETENTION_DAYS = int(os.getenv("RESULT_RETENTION_DAYS", "30"))
+
 
 
 LOG_DIR = BASE_DIR / "logs"

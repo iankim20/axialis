@@ -71,6 +71,7 @@ class UploadJob(models.Model):
     completed_at = models.DateTimeField(blank=True, null=True)
     
     zip_deleted_at = models.DateTimeField(blank=True, null=True)
+    result_deleted_at = models.DateTimeField(blank=True, null=True)
 
     error_message = models.TextField(blank=True)
 

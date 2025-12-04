@@ -16,7 +16,7 @@ app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
     "cleanup-old-iolm-zips-daily": {
-        "task": "iolm.tasks.cleanup_old_zips",
+        "task": "iolm.tasks.cleanup_old_files",
         "schedule": crontab(hour=3, minute=0),  # CELERY_TIMEZONE Asia/Seoul 새벽 3시마다 시행
     },
 }
