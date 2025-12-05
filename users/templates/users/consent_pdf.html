@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <title>환자 개인정보 처리 위탁 및 국외 이전 동의서</title>
+    <style>
+      body {
+        font-family: "Nanum Gothic", "Noto Sans CJK KR", "Malgun Gothic",
+                    "Apple SD Gothic Neo", sans-serif;
+        font-size: 11pt;
+        line-height: 1.5;
+        color: #111827;
+        margin: 24px;
+      }
+      h1 {
+        font-size: 16pt;
+        margin-bottom: 8px;
+      }
+      h2 {
+        font-size: 13pt;
+        margin-top: 16px;
+        margin-bottom: 4px;
+      }
+      p, li {
+        font-size: 11pt;
+      }
+      .meta {
+        font-size: 9pt;
+        color: #4b5563;
+        margin-bottom: 12px;
+      }
+      .section {
+        margin-bottom: 8px;
+      }
+      .signature {
+        margin-top: 24px;
+      }
+      .signature-line {
+        margin-top: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>환자 개인정보 처리 위탁 및 국외 이전 동의서</h1>
+
+    <p class="meta">
+      동의자 계정: {{ consent.user.username }}<br>
+      동의 이메일: {{ consent.email_at_consent }}<br>
+      동의일시: {{ consent.created_at|date:"Y-m-d H:i" }} (KST 기준)<br>
+      정책 버전: {{ consent.policy_version }}
+    </p>
+
+    <div class="section">
+      <h2>1. 위탁자 및 수탁자</h2>
+      <p>
+        • 위탁자: 귀하가 속한 의료기관 및 해당 계정 사용자(의사, 연구자 등)<br>
+        • 수탁자: 버츄온랩스(Axialis 서비스 운영자)
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>2. 위탁 목적 및 처리 범위</h2>
+      <p>
+        Axialis는 IOLMaster 등에서 출력된 검사 결과 이미지(예: PDF, PNG, JPG)를 업로드 받아,
+        AI 및 소프트웨어를 이용하여 생체계측 값, 굴절 정보 등을 구조화된 데이터(Excel 등)로 변환하는
+        연구 및 진료 보조 서비스를 제공합니다. 환자 식별정보는 오직 귀하의 연구 및 진료 목적 범위 내에서만 사용되며,
+        Axialis는 자체적인 진단·치료 결정을 내리지 않습니다.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>3. 처리되는 개인정보 항목</h2>
+      <ul>
+        <li>환자 기본 정보: 이름, 생년월일, 성별, 차트번호, 검사일 등</li>
+        <li>검사 결과 이미지 내 안과 관련 계측 및 굴절 정보</li>
+        <li>위 정보로부터 추출된 구조화 데이터(예: Excel, JSON)</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>4. 보관 및 삭제 정책</h2>
+      <p>
+        업로드된 원본 파일 및 결과 파일은 서비스 운영 정책에 따라 일정 기간 보관 후 자동 삭제됩니다.
+        실제 보관 기간 및 삭제 주기는 서비스 공지 및 개인정보 처리방침에 따릅니다.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>5. 국외 이전 및 재위탁</h2>
+      <p>
+        본 서비스는 클라우드 인프라(AWS S3 등) 및 OpenAI Enterprise API를 이용하여 제공됩니다. 이에 따라
+        환자 데이터가 암호화된 형태로 국외 서버(예: 미국, 기타 지역)에 저장·처리될 수 있으며, AWS 및 OpenAI 등
+        서비스 제공에 필수적인 업체에 재위탁될 수 있습니다.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>6. 보안 조치</h2>
+      <ul>
+        <li>전송 및 저장 구간 암호화</li>
+        <li>접근 권한 통제 및 접속 로그 관리</li>
+        <li>OpenAI Enterprise 정책 준수 및 모델 재학습 목적으로의 사용 금지</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>7. 책임 범위</h2>
+      <p>
+        Axialis가 제공하는 분석 결과는 연구 및 진료를 보조하기 위한 참고 자료이며,
+        최종 진단 및 치료 결정에 대한 책임은 전적으로 귀하 및 귀하의 의료기관에 있습니다.
+        환자 개개인으로부터 필요한 법적 동의 및 IRB 승인 등은 위탁자인 귀하의 책임 하에 취득되어야 합니다.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>8. 동의 항목 체크 결과</h2>
+      <ul>
+        <li>개인정보 처리 위탁 동의:
+          {% if consent.consent_processing %}동의{% else %}미동의{% endif %}
+        </li>
+        <li>재위탁(AWS, OpenAI 등) 동의:
+          {% if consent.consent_delegation %}동의{% else %}미동의{% endif %}
+        </li>
+        <li>국외 이전 동의:
+          {% if consent.consent_overseas %}동의{% else %}미동의{% endif %}
+        </li>
+        <li>적법한 위탁 권한 보유 및 필요한 동의/승인 취득 확인:
+          {% if consent.confirm_authority %}예{% else %}아니오{% endif %}
+        </li>
+        <li>최종 진단 및 치료 책임은 본인 및 소속 의료기관에 있음을 확인:
+          {% if consent.consent_medical_responsibility %}예{% else %}아니오{% endif %}
+        </li>
+      </ul>
+    </div>
+
+    <div class="signature">
+      <p>
+        상기 내용을 충분히 이해하였으며, 위와 같이 환자 개인정보 처리 위탁 및 국외 이전에 동의합니다.
+      </p>
+      <div class="signature-line">
+        동의 일시: {{ consent.created_at|date:"Y년 m월 d일 H시 i분" }}<br>
+        동의자: {{ consent.user.username }} (서명 갈음)
+      </div>
+    </div>
+  </body>
+</html>

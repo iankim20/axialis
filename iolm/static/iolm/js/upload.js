@@ -109,6 +109,27 @@ function setupZipUpload() {
     const csrfInput = form.querySelector('input[name="csrfmiddlewaretoken"]');
     const csrfToken = csrfInput ? csrfInput.value : "";
 
+    const requireConsent = form.dataset.requireConsent === "1";   // ★ 추가
+    const consentUrl = form.dataset.consentUrl || "";            // ★ 추가
+    const consentModal = document.getElementById("consent-modal");
+
+    if (consentModal) {
+        // 닫기 버튼
+        const closeButtons = consentModal.querySelectorAll("[data-consent-modal-close]");
+        closeButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                consentModal.classList.add("hidden");
+            });
+        });
+
+        // 배경 클릭 시 닫기
+        consentModal.addEventListener("click", (e) => {
+            if (e.target === consentModal) {
+                consentModal.classList.add("hidden");
+            }
+        });
+    }
+
     let currentFile = null;
     let currentImageCount = 0;
 
@@ -398,6 +419,25 @@ function setupZipUpload() {
     };
 
     const startUploadFlow = async () => {
+        // ★ 1) 동의 필요하면, 업로드 대신 modal만 띄우고 종료
+        if (requireConsent) {
+            if (consentModal) {
+                consentModal.classList.remove("hidden");
+            } else {
+                // 혹시 modal DOM이 없는 경우 fallback
+                const target = consentUrl || "/users/consent/";
+                const msg =
+                    "환자 개인정보 처리 위탁 및 국외 이전에 대한 동의가 필요합니다.\n" +
+                    "동의서 작성 페이지로 이동한 뒤, 동의를 완료하고 다시 업로드를 진행해 주세요.\n" +
+                    "(최초 1회 및 이후 12개월 간격으로만 동의하시면 됩니다.)";
+                if (window.confirm(msg)) {
+                    const nextPath = window.location.pathname || "/iolm/upload/";
+                    const sep = target.includes("?") ? "&" : "?";
+                    window.location.href = `${target}${sep}next=${encodeURIComponent(nextPath)}`;
+                }
+            }
+            return;
+        }
         if (!zipInput.files || zipInput.files.length === 0 || !currentFile) {
             alert("먼저 ZIP 파일을 선택해주세요.");
             return;
@@ -434,6 +474,26 @@ function setupZipUpload() {
             });
 
             if (!presignResp.ok) {
+                if (presignResp.status === 403) {
+                    let data = null;
+                    try {
+                        data = await presignResp.json();
+                    } catch (e) {
+                        // ignore
+                    }
+                    if (data && data.error === "CONSENT_REQUIRED") {
+                        const target =
+                            data.consent_url || consentUrl || "/users/consent/";
+                        alert(
+                            "환자 개인정보 처리 위탁 및 국외 이전에 대한 동의가 필요합니다.\n" +
+                            "동의서 페이지로 이동한 뒤 다시 업로드를 진행해 주세요."
+                        );
+                        const nextPath = window.location.pathname || "/iolm/upload/";
+                        const sep = target.includes("?") ? "&" : "?";
+                        window.location.href = `${target}${sep}next=${encodeURIComponent(nextPath)}`;
+                        return;
+                    }
+                }
                 throw new Error("Failed to create presigned URL");
             }
 

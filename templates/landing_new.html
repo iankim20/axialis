@@ -1,0 +1,234 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Axialis - Medical IOLM Data Solution</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'css/landing_new.css' %}">
+  <script defer src="{% static 'js/landing_new.js' %}"></script>
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="logo">
+          <img src="{% static 'logo_blue.png' %}" alt="Axialis Logo" class="logo-img">
+          Axialis
+        </a>
+      </div>
+      <nav class="nav-right">
+        <a href="{% url 'iolm:upload' %}" class="nav-link" style="color: #2563eb; font-weight: 600;">IOLM</a>
+        <a class="nav-link nav-link-disabled">Visual Field</a>
+        <a class="nav-link nav-link-disabled">Topo</a>
+        <div class="nav-divider"></div>
+        {% if user.is_authenticated %}
+          <a href="{% url 'users:dashboard' %}" class="nav-link">마이페이지</a>
+          <a href="{% url 'users:logout' %}" class="nav-link nav-link-logout">로그아웃</a>
+        {% else %}
+          <a href="{% url 'users:login' %}" class="nav-link nav-login">로그인</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-inner">
+        <h1 class="hero-title">
+          연구 데이터, 일일이 수작업하지 마시고<br class="br-desktop">
+          <span>Axialis AI</span>로 한 번에 정리하세요.
+        </h1>
+        <p class="hero-subtitle">
+          여러분의 시간, 더 소중히 쓰셔야 할 때입니다.
+        </p>
+
+        <div class="hero-visual">
+          <div class="visual-card input-card">
+            <div class="scan-beam"></div> <div class="file-stack">
+              <div class="file-paper"></div>
+              <div class="file-paper"></div>
+              <div class="file-paper content">
+                <span style="font-size:10px; font-weight:700; color:#64748b;">JPG / PNG</span>
+                <div class="file-lines"></div>
+                <div class="file-lines" style="width:20px;"></div>
+              </div>
+            </div>
+            <p class="visual-label">Raw Data</p>
+          </div>
+
+          <div class="visual-process">
+            <div class="connection-track">
+              <div class="data-comet"></div> </div>
+            <div class="ai-core-wrapper">
+              <div class="ai-ripple"></div> <div class="ai-ripple"></div> <div class="ai-badge">
+                <span>Axialis AI Engine</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="visual-card output-card">
+            <div class="excel-sheet">
+              <div class="excel-header"></div>
+              <div class="excel-row"></div>
+              <div class="excel-row"></div>
+              <div class="excel-row highlight"></div>
+              <div class="excel-row"></div>
+            </div>
+            <p class="visual-label">Structured Data</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="process-section">
+      <div class="container">
+        <h2 class="section-title reveal-item">How it works</h2>
+        <p class="section-subtitle reveal-item">복잡한 설치 없이, 웹에서 즉시 해결하세요.</p>
+        
+        <div class="process-steps">
+          <div class="step-item reveal-item">
+            <div class="step-num">01</div>
+            <h3 class="step-title">파일 업로드</h3>
+            <p class="step-desc">EMR에서 다운받은 IOLM 이미지들을<br>ZIP 파일로 묶어서 업로드합니다.</p>
+          </div>
+          <div class="step-item reveal-item">
+            <div class="step-num">02</div>
+            <h3 class="step-title">AI 자동 분석</h3>
+            <p class="step-desc">Axialis의 특화된 OCR 엔진이<br>수치를 판독하고 데이터를 정렬합니다.</p>
+          </div>
+          <div class="step-item reveal-item">
+            <div class="step-num">03</div>
+            <h3 class="step-title">엑셀 다운로드</h3>
+            <p class="step-desc">환자 ID, 눈(OD/OS) 별로 정리된<br>엑셀 파일을 즉시 다운로드합니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="why-section">
+      <div class="container">
+        <h2 class="section-title reveal-item">Why Axialis?</h2>
+        <div class="why-grid">
+          <article class="why-card reveal-item">
+            <div class="why-icon">🚀</div>
+            <h3 class="why-card-title">압도적인 정확도</h3>
+            <p class="why-card-text">IOLM 이미지에 Fine-tuning된 최신 Vision 모델을 사용하여 기존 OCR이 놓치는 소수점 단위 수치까지 정밀하게 인식합니다.</p>
+          </article>
+          <article class="why-card reveal-item">
+            <div class="why-icon">⚡</div>
+            <h3 class="why-card-title">초고속 대량 처리</h3>
+            <p class="why-card-text">수백 장의 검사 결과를 입력하느라 초과근무하지 마세요. 수작업 대비 50배 이상 빠른 속도를 경험해 보세요.</p>
+          </article>
+          <article class="why-card reveal-item">
+            <div class="why-icon">🔒</div>
+            <h3 class="why-card-title">철저한 데이터 보안</h3>
+            <p class="why-card-text">업로드된 이미지는 분석 즉시 자동 폐기되며, AI 학습용으로 재사용되지 않습니다. 연구 윤리와 보안을 최우선으로 합니다.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="benefit-section reveal-item">
+      <div class="container">
+        <div class="benefit-card">
+          <h2 class="benefit-title">이런 분께 추천합니다</h2>
+          <ul class="benefit-list">
+            <li>IOLM 스캔 수백 건을 엑셀에 옮기느라 야간·당직 시간까지 고생하시는 인턴, 전공의 선생님</li>
+            <li>임상 데이터 정리는 필요하지만, 연구 보조원(RA)을 따로 두기 어려운 교수님</li>
+            <li>단순 타이핑 대신 환자 선별, 수술 결과 분석 등 "진짜 연구"에 시간을 쓰고 싶은 분</li>
+            <li>수기 입력에서 발생하는 휴먼 에러(Omission/Typo)를 원천 차단하고 싶은 분</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-section">
+      <div class="container">
+        <h2 class="section-title reveal-item">FAQ</h2>
+        <div class="faq-grid">
+          <div class="faq-item reveal-item">
+            <h4 class="faq-q">Q. 환자 정보는 안전한가요?</h4>
+            <p class="faq-a">네, 안전합니다. Axialis는 업로드된 파일을 휘발성 스토리지에서 처리하며, 결과물 생성 즉시 원본 이미지를 영구 삭제합니다.</p>
+          </div>
+          <div class="faq-item reveal-item">
+            <h4 class="faq-q">Q. 어떤 파일 형식을 지원하나요?</h4>
+            <p class="faq-a">JPG, PNG 등 일반적인 이미지 파일 형식을 모두 지원합니다.</p>
+          </div>
+          <div class="faq-item reveal-item">
+            <h4 class="faq-q">Q. 인식률은 어느 정도인가요? 환불이 되는지도 궁금해요.</h4>
+            <p class="faq-a">
+              IOLM 500/700 기종 기준 수치 인식률은 100%, 텍스트 인식률은 99.5% 이상의 정확도를 보입니다. 추출된 정보에 틀린 내용이 있으면 환불해드립니다. 
+              <br><br>
+              <button id="btnOpenRefund" class="btn-text-link">환불 및 보상 정책 자세히 보기 &rarr;</button>
+            </p>
+          </div>
+          <div class="faq-item reveal-item">
+            <h4 class="faq-q">Q. 무료로 사용할 수 있나요?</h4>
+            <p class="faq-a">네, 회원가입 시 제공되는 무료 포인트로 충분히 성능을 검증해보실 수 있습니다. 이후에는 1장당 2포인트가 차감됩니다 (1포인트 당 100원) </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="security-bar">
+      <div class="container">
+        <div class="security-items">
+          <div class="security-item">
+            <span class="sec-icon">🔒</span> SSE-KMS 암호화 전송
+          </div>
+          <div class="security-divider"></div>
+          <div class="security-item">
+            <span class="sec-icon">🛡️</span> HIPAA 가이드라인 준수
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-inner">
+      &copy; 2025 Axialis. All rights reserved. <br>
+      Contact: support@axialis.com
+    </div>
+  </footer>
+
+  <div id="promoPopup" class="promo-popup">
+    <div class="popup-header">
+      <h3 class="popup-title">🎁 신규 가입 특별 혜택</h3>
+      <button id="closePopupBtn" class="popup-close" aria-label="닫기">&times;</button>
+    </div>
+    <div class="popup-body">
+      <p class="popup-text">지금 가입하면 <strong>100 포인트 무료 지급!</strong> </br>빠르고 정확한 데이터 추출을 경험해보세요</p> 
+      <a href="{% url 'users:login' %}" class="btn-popup-action">혜택받기 →</a>
+    </div>
+  </div>
+
+  <div id="refundModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">환불 및 보상 정책</h3>
+        <button id="closeRefundBtn" class="popup-close">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div class="policy-group">
+          <h4>1. 포인트 유효기간 및 소멸</h4>
+          <p>「상법 제64조」 및 서비스 이용약관에 의거하여, 충전일로부터 5년(60개월) 간 사용되지 않았거나 환불되지 않은 포인트는 상사시효 만료로 자동 소멸됩니다.</p>
+        </div>
+        <div class="policy-group">
+          <h4>2. 일반 환불 규정</h4>
+          <p>미사용 잔여 포인트에 대해서는 충전일로부터 5년 이내라면 언제든지 <strong>수수료 없이 전액 환불</strong>이 가능합니다.</p>
+        </div>
+        <div class="policy-group">
+          <h4>3. 오류 보상 및 환불 (책임 환불제)</h4>
+          <p>서비스 이용 후 결과물에서 <strong>수치(Numeric) 데이터의 명백한 판독 오류</strong>가 확인될 경우, 고객센터 접수 시 해당 건 처리에 차감된 포인트를 <strong>100% 복구</strong>해 드립니다.</p>
+          <p class="policy-note">※ 단, 환자명 등 단순 텍스트(Text)의 오탈자나 원본 이미지의 심각한 훼손으로 인한 판독 불가는 제외됩니다.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-close" onclick="document.getElementById('refundModal').classList.remove('open')">확인</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

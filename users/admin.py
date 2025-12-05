@@ -1,7 +1,8 @@
 # users/admin.py
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, UserConsent
+
 
 
 @admin.register(CustomUser)
@@ -77,3 +78,25 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
     )
+
+
+@admin.register(UserConsent)
+class UserConsentAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "user",
+        "email_at_consent",
+        "policy_version",
+        "created_at",
+        "valid_until",
+        "is_fully_accepted",
+    )
+    list_filter = ("policy_version", "is_fully_accepted", "created_at")
+    search_fields = (
+        "user__username",
+        "user__realname",
+        "user__kakao_id",
+        "email_at_consent",
+    )
+    ordering = ("-created_at",)
+    readonly_fields = ("created_at",)

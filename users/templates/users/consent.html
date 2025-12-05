@@ -1,0 +1,192 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <title>Axialis - 개인정보 처리 위탁 및 국외 이전 동의서</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'users/css/dashboard.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+  </head>
+  <body>
+    <!-- 공통 Navigation -->
+    <header class="nav">
+      <div class="nav-inner">
+        <div class="nav-left">
+          <a href="{% url 'landing' %}" class="logo-link">
+            <img src="{% static 'logo_blue.png' %}" alt="Axialis" class="logo-img">
+            <span class="logo-text">Axialis</span>
+          </a>
+        </div>
+        <nav class="nav-right">
+          <a href="{% url 'iolm:upload' %}" class="nav-link">IOLM 데이터 추출</a>
+          <a class="nav-link nav-link-disabled">Visual Field</a>
+          <a class="nav-link nav-link-disabled">Topo</a>
+          <a href="{% url 'users:dashboard' %}" class="nav-link">마이페이지</a>
+          <a href="{% url 'users:logout' %}" class="nav-link nav-link-logout">로그아웃</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <div class="dashboard-inner">
+        <section class="content" style="max-width: 960px; margin: 32px auto;">
+          <header class="content-header">
+            <div class="header-left">
+              <h1 class="content-title">환자 개인정보 처리 위탁 및 국외 이전 동의서</h1>
+              <p class="content-subtitle">
+                귀하(의료기관/의사)는 Axialis(버츄온랩스)에 환자 검사 데이터를 처리 위탁하기 전에
+                아래 내용을 충분히 읽고 이해한 후 동의해 주시기 바랍니다.
+              </p>
+            </div>
+          </header>
+
+          {% if latest_valid_consent %}
+          <div class="alert alert-success" style="margin-bottom: 16px;">
+            <strong>현재 유효한 동의가 등록되어 있습니다.</strong><br>
+            동의일: {{ latest_valid_consent.created_at|date:"Y-m-d" }} /
+            유효기간: {{ latest_valid_consent.valid_until|date:"Y-m-d" }}
+          </div>
+          {% elif latest_consent %}
+          <div class="alert alert-warning" style="margin-bottom: 16px;">
+            <strong>이전 동의가 존재하지만 현재 유효기간이 만료되었거나, 최신 동의서 버전과 다릅니다.</strong><br>
+            최신 동의일: {{ latest_consent.created_at|date:"Y-m-d" }} /
+            다시 동의가 필요합니다.
+          </div>
+          {% endif %}
+
+          <!-- 동의서 본문 -->
+          <article class="card" style="padding: 24px; margin-bottom: 24px;">
+            <h2 class="section-title">1. 위탁자 및 수탁자</h2>
+            <p class="section-body">
+              • 위탁자: 귀하가 속한 의료기관 및 해당 계정 사용자(의사, 연구자 등)<br>
+              • 수탁자: 버츄온랩스(Axialis 서비스 운영자)
+            </p>
+
+            <h2 class="section-title">2. 위탁 목적 및 처리 범위</h2>
+            <p class="section-body">
+              Axialis는 IOLMaster 등에서 출력된 검사 결과 이미지(예: PDF, PNG, JPG)를 업로드 받아,
+              AI 및 소프트웨어를 이용하여 생체계측 값, 굴절 정보 등을 구조화된 데이터(Excel 등)로 변환하는
+              연구/진료 보조 서비스를 제공합니다.<br>
+              환자 식별정보(이름, 생년월일, 차트번호 등)는 오직
+              <strong>귀하의 연구 및 진료 목적 범위 내</strong>에서만 사용되며,
+              Axialis는 자체적인 진단·치료 결정을 내리지 않습니다.
+            </p>
+
+            <h2 class="section-title">3. 개인정보 항목</h2>
+            <p class="section-body">
+              처리되는 항목에는 다음이 포함될 수 있습니다.
+            </p>
+            <ul class="section-list">
+              <li>환자 기본 정보: 이름, 성별, 생년월일, 차트번호, 검사일 등</li>
+              <li>검사 결과 이미지 내의 안과 관련 계측 및 굴절 정보(IOLM biometry, refraction 등)</li>
+              <li>해당 정보로부터 추출된 구조화 데이터(Excel, JSON 등)</li>
+            </ul>
+
+            <h2 class="section-title">4. 보관 및 삭제 정책</h2>
+            <p class="section-body">
+              • 업로드된 ZIP/이미지 파일은 AI 분석 및 결과 생성에 필요한 기간 동안만 보관되며,
+              서비스 정책에 따라 자동 삭제됩니다.<br>
+              • 결과 엑셀 파일은 귀하가 재다운로드할 수 있도록 일정 기간 보관될 수 있으며,
+              이후 자동 삭제 처리가 이루어집니다.<br>
+              • 실제 보관 기간 및 삭제 주기(예: ZIP 파일 1일, 결과 엑셀 30일 등)는
+              서비스 운영 정책에 따라 설정되며, 필요 시 별도 안내됩니다.
+            </p>
+
+            <h2 class="section-title">5. 국외 이전 및 재위탁</h2>
+            <p class="section-body">
+              본 서비스는 클라우드 인프라(AWS S3 등) 및 OpenAI Enterprise API를 이용하여 제공됩니다.
+              이에 따라 환자 정보가 암호화된 형태로 국외 서버(예: 미국, 기타 지역)에 저장·처리될 수 있습니다.<br>
+              Axialis는 다음과 같은 업체에 재위탁할 수 있습니다.
+            </p>
+            <ul class="section-list">
+              <li>AWS (Amazon Web Services): 파일 저장 및 인프라 운영</li>
+              <li>OpenAI: 이미지/텍스트 분석을 위한 Enterprise API</li>
+            </ul>
+            <p class="section-body">
+              재위탁처 및 국외 이전 대상은 서비스 안정성 및 보안 강화를 위해 변경될 수 있으며,
+              중요한 변경이 있을 경우 사전에 공지합니다.
+            </p>
+
+            <h2 class="section-title">6. 보안 조치</h2>
+            <p class="section-body">
+              Axialis는 다음과 같은 보안 조치를 취합니다.
+            </p>
+            <ul class="section-list">
+              <li>전송 및 저장 구간 암호화(HTTPS, 서버사이드 암호화 등)</li>
+              <li>접근 권한 통제 및 로그 관리</li>
+              <li>OpenAI Enterprise 정책을 준수하며, 업로드된 데이터는
+                  <strong>모델 재학습(training) 목적에 사용되지 않습니다.</strong></li>
+            </ul>
+
+            <h2 class="section-title">7. 책임 범위</h2>
+            <p class="section-body">
+              Axialis가 제공하는 결과는 귀하의 연구 및 진료를 보조하기 위한 참고 자료입니다.
+              최종 진단 및 치료 결정에 대한 책임은 전적으로 귀하 및 귀하의 의료기관에 있습니다.<br>
+              환자 개개인으로부터 필요한 법적 동의 및 IRB 승인 등은
+              <strong>위탁자인 귀하의 책임</strong> 하에 취득되어야 합니다.
+            </p>
+
+            <h2 class="section-title">8. 동의 철회</h2>
+            <p class="section-body">
+              귀하는 언제든지 서비스 이용 중단 및 계정 삭제를 통해 향후 데이터 업로드를 중단할 수 있으며,
+              법령이 허용하는 범위 내에서 기 보관 데이터의 삭제를 요청할 수 있습니다.
+            </p>
+          </article>
+
+          <!-- 동의 폼 -->
+          <form method="post" class="card" style="padding: 24px;">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next_url }}">
+
+            <h2 class="section-title">9. 동의자 정보</h2>
+            <div class="form-row">
+              <label for="contact_email">연락용 이메일</label>
+              <input
+                id="contact_email"
+                name="contact_email"
+                type="email"
+                value="{{ user.email }}"
+                placeholder="ex) name@hospital.com"
+                required
+              >
+            </div>
+
+            <h2 class="section-title">10. 동의 항목</h2>
+            <div class="checkbox-group">
+              <label class="checkbox-row">
+                <input type="checkbox" name="consent_processing">
+                <span>환자 검사 데이터를 Axialis에 위탁하여 분석/가공하는 것에 동의합니다.</span>
+              </label>
+              <label class="checkbox-row">
+                <input type="checkbox" name="consent_delegation">
+                <span>위탁 처리 과정에서 필요한 범위 내에서 재위탁(AWS, OpenAI 등)이 이루어지는 것에 동의합니다.</span>
+              </label>
+              <label class="checkbox-row">
+                <input type="checkbox" name="consent_overseas">
+                <span>서비스 제공을 위하여 환자 데이터가 암호화된 형태로 국외 서버에 이전·저장·처리될 수 있음에 동의합니다.</span>
+              </label>
+              <label class="checkbox-row">
+                <input type="checkbox" name="confirm_authority">
+                <span>본인은 해당 환자 데이터에 대해 적법한 수집·이용 권한을 가진 의료기관/연구자로서, 필요한 법적 동의 및 승인을 취득하였음을 확인합니다.</span>
+              </label>
+              <label class="checkbox-row">
+                <input type="checkbox" name="consent_medical_responsibility">
+                <span>Axialis의 결과는 참고용 정보이며, 최종 진단 및 치료 결정에 대한 책임은 전적으로 본인 및 소속 의료기관에 있음을 확인합니다.</span>
+              </label>
+            </div>
+
+            <div class="form-actions" style="margin-top: 24px; display: flex; gap: 12px;">
+              <button type="submit" class="btn btn-primary">
+                동의 내용 확인 및 서명 완료
+              </button>
+              <a href="{{ next_url }}" class="btn btn-ghost">
+                동의하지 않고 돌아가기
+              </a>
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

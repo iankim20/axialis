@@ -203,6 +203,8 @@
             data-presign-url="{% url 'iolm:upload_presign' %}"
             data-register-url="{% url 'iolm:upload_register' %}"
             data-dashboard-url="{% url 'users:dashboard' %}"
+            data-require-consent="{% if user.is_authenticated and not has_valid_consent %}1{% else %}0{% endif %}"
+            data-consent-url="{{ consent_url }}"
           >
             {% csrf_token %}
 
@@ -417,6 +419,45 @@
       </div>
     </div>
   </div>
+
+
+  <div id="consent-modal" class="modal-backdrop hidden">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3>환자 개인정보 처리 위탁 및 국외 이전 동의 안내</h3>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">
+          환자 개인정보 처리 위탁 및 국외 이전에 대한 동의가 필요합니다.<br>
+          아래 버튼을 눌러 동의서 작성 페이지로 이동한 뒤, 동의를 완료하고 다시 업로드를 진행해 주세요.
+        </p>
+        <p class="modal-desc" style="margin-top: 8px; font-size: 0.9rem; color: #4b5563;">
+          (최초 1회 및 이후 12개월 간격으로만 동의하시면 됩니다.)
+        </p>
+
+        <div style="margin-top: 16px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
+          <a
+            href="{{ consent_url }}?next={% url 'iolm:upload' %}"
+            class="btn btn-primary"
+          >
+            동의서 작성 페이지로 이동
+          </a>
+          <button
+            type="button"
+            class="btn btn-ghost"
+            data-consent-modal-close
+          >
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <script src="{% static 'iolm/js/upload.js' %}"></script>
+</body>
+</html>
 
   <script src="{% static 'iolm/js/upload.js' %}"></script>
 </body>

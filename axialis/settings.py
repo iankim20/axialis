@@ -189,6 +189,13 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles"  # 나중에 collectstatic용
 
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"          # 예시
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER   # 추후 axialis.ai 만들고 나서 no-reply@axialis.ai 로 변경
 
 
 
@@ -200,6 +207,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # settings.py 맨 아래나 관련 섹션에 추가
 IOLM_MAX_UPLOAD_BYTES = 250 * 1024 * 1024  # 200MB
 
+CONSENT_POLICY_VERSION = "2025-12-01"  # 동의서 버전 관리용
+CONSENT_VALID_DAYS = 365               # 동의 후 유효기간(일 단위)
 
 ### storage-related
 
@@ -276,6 +285,9 @@ CELERY_WORKER_HIJACK_ROOT_LOGGER = False
 
 ZIP_RETENTION_DAYS = int(os.getenv("ZIP_RETENTION_DAYS", "1"))
 RESULT_RETENTION_DAYS = int(os.getenv("RESULT_RETENTION_DAYS", "30"))
+
+
+
 
 
 
@@ -364,12 +376,34 @@ LOGGING = {
             "level": "INFO",
             "propagate": False,
         },
+
         # 그 외 루트 logger (원하면 여기에도 celery_file 달 수 있음)
         "": {
             "handlers": ["console"],
             "level": "INFO",
         },
+
+        # ===== 여기부터 추가: fontTools 로그 줄이기 =====
+        # WARNING 이상만 찍도록 해서 DEBUG/INFO(글리프 덤프) 싹 제거
+        "fontTools": {
+            "handlers": ["console", "celery_file"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+        "fontTools.ttLib": {
+            "handlers": ["console", "celery_file"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+        "fontTools.subset": {
+            "handlers": ["console", "celery_file"],
+            "level": "WARNING",
+            "propagate": False,
+        },
     },
 }
+
+
+
 
 

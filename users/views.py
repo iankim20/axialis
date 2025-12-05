@@ -21,8 +21,13 @@ from django.http import (
 )
 from django.contrib.auth import logout as django_logout
 from django.shortcuts import redirect, render
+from datetime import timedelta
 
-from .models import CustomUser
+from django.urls import reverse
+from django.utils import timezone
+
+from .models import CustomUser, UserConsent
+from .tasks import generate_consent_pdf_and_send_email
 
 
 KAKAO_AUTH_HOST = getattr(settings, "KAKAO_AUTH_HOST", "https://kauth.kakao.com")
@@ -207,6 +212,10 @@ def dashboard(request: HttpRequest) -> HttpResponse:
     page_number = request.GET.get("page") or 1
     page_obj = paginator.get_page(page_number)
 
+    latest_valid_consent = UserConsent.get_latest_valid(user)
+    # ★ billing.PointLog 붙이기 전까지 임시로 빈 리스트 사용
+    point_logs: list[Any] = []
+
     context = {
         "user": user,
         "jobs": page_obj.object_list,
@@ -214,8 +223,101 @@ def dashboard(request: HttpRequest) -> HttpResponse:
         "jobs_start_index": page_obj.start_index() - 1,
         # PointLog 는 나중에 billing 앱에서 구현 후 연결
         # "point_logs": PointLog.objects.filter(user=user).order_by("-created_at")[:50],
+        "latest_valid_consent": latest_valid_consent,    
+        "has_valid_consent": bool(latest_valid_consent), 
+        "point_logs": point_logs,
     }
     return render(request, "users/dashboard.html", context)
+
+
+@login_required
+def consent_view(request: HttpRequest) -> HttpResponse:
+    user = request.user
+
+    latest_valid = UserConsent.get_latest_valid(user)
+    latest_any = (
+        UserConsent.objects.filter(user=user).order_by("-created_at").first()
+    )
+
+    next_url = (
+        request.POST.get("next")
+        or request.GET.get("next")
+        or reverse("iolm:upload")
+    )
+
+    if request.method == "POST":
+        email = (request.POST.get("contact_email") or "").strip()
+        if email:
+            user.email = email
+            user.save(update_fields=["email"])
+
+        consent_processing = request.POST.get("consent_processing") == "on"
+        consent_delegation = request.POST.get("consent_delegation") == "on"
+        consent_overseas = request.POST.get("consent_overseas") == "on"
+        confirm_authority = request.POST.get("confirm_authority") == "on"
+        consent_medical_responsibility = (
+            request.POST.get("consent_medical_responsibility") == "on"
+        )
+
+        all_checked = (
+            consent_processing
+            and consent_delegation
+            and consent_overseas
+            and confirm_authority
+            and consent_medical_responsibility
+        )
+
+        if not all_checked:
+            messages.error(
+                request,
+                "모든 필수 동의 항목에 체크해야 환자 정보 업로드가 가능합니다.",
+            )
+        else:
+            now_ts = timezone.now()
+            valid_days = getattr(settings, "CONSENT_VALID_DAYS", 365)
+            valid_until = now_ts + timedelta(days=valid_days)
+            policy_version = getattr(settings, "CONSENT_POLICY_VERSION", "")
+
+            consent = UserConsent.objects.create(
+                user=user,
+                email_at_consent=email or user.email or "",
+                policy_version=policy_version,
+                valid_until=valid_until,
+                consent_processing=consent_processing,
+                consent_delegation=consent_delegation,
+                consent_overseas=consent_overseas,
+                confirm_authority=confirm_authority,
+                consent_medical_responsibility=consent_medical_responsibility,
+                ip_address=request.META.get("REMOTE_ADDR") or None,
+                user_agent=request.META.get("HTTP_USER_AGENT") or "",
+            )
+
+            generate_consent_pdf_and_send_email.delay(consent.id)
+
+            messages.success(
+                request,
+                "개인정보 처리 위탁 및 국외 이전 동의가 저장되었습니다. "
+                "동의서 사본이 이메일로 발송됩니다.",
+            )
+            return redirect(next_url)
+
+        # POST 실패 시에도 최신 유효/전체 동의 다시 계산
+        latest_valid = UserConsent.get_latest_valid(user)
+        latest_any = (
+            UserConsent.objects.filter(user=user).order_by("-created_at").first()
+        )
+
+    context = {
+        "user": user,
+        "latest_valid_consent": latest_valid,
+        "latest_consent": latest_any,
+        "next_url": next_url,
+        "policy_version": getattr(settings, "CONSENT_POLICY_VERSION", ""),
+        "valid_days": getattr(settings, "CONSENT_VALID_DAYS", 365),
+    }
+    return render(request, "users/consent.html", context)
+
+
 
 
 @login_required

@@ -26,11 +26,22 @@ from django.conf import settings
 from zoneinfo import ZoneInfo
 from django.utils import timezone
 
+from django.urls import reverse
+from users.models import UserConsent
+
+def _user_has_valid_consent(user) -> bool:
+    return UserConsent.get_latest_valid(user) is not None
 
 
 def upload_page(request):
     max_bytes = settings.IOLM_MAX_UPLOAD_BYTES
     max_mb = max_bytes // (1024 * 1024)
+
+    has_valid_consent = False
+    if request.user.is_authenticated:
+        has_valid_consent = _user_has_valid_consent(request.user)
+
+
 
     return render(
         request,
@@ -38,6 +49,8 @@ def upload_page(request):
         {
             "max_size_bytes": max_bytes,
             "max_size_mb": max_mb,
+            "has_valid_consent": has_valid_consent,              
+            "consent_url": reverse("users:consent"),             
         },
     )
 
@@ -89,6 +102,17 @@ def upload_presign(request: HttpRequest) -> JsonResponse:
     2) UploadJob 레코드를 미리 하나 만들고 (상태: pending)
     3) 그 job이 사용할 S3 key로 presigned POST 생성
     """
+    user = request.user
+    if not _user_has_valid_consent(user):
+        return JsonResponse(
+            {
+                "error": "CONSENT_REQUIRED",
+                "consent_url": reverse("users:consent"),
+            },
+            status=403,
+        )
+
+
     try:
         payload = json.loads(request.body.decode("utf-8"))
     except json.JSONDecodeError:

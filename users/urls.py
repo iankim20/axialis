@@ -10,6 +10,7 @@ urlpatterns = [
     path("kakao/callback/", views.kakao_callback, name="kakao_callback"),
 
     path("dashboard/", views.dashboard, name="dashboard"),
+    path("consent/", views.consent_view, name="consent"),  
 
     path("logout/", views.logout_view, name="logout"),
     path("unlink/", views.unlink_view, name="unlink"),
