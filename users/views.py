@@ -251,6 +251,10 @@ def consent_view(request: HttpRequest) -> HttpResponse:
             user.email = email
             user.save(update_fields=["email"])
 
+        # ★ 여기 추가: 성명/직위
+        full_name = (request.POST.get("full_name") or "").strip()
+        position = (request.POST.get("position") or "").strip()
+
         consent_processing = request.POST.get("consent_processing") == "on"
         consent_delegation = request.POST.get("consent_delegation") == "on"
         consent_overseas = request.POST.get("consent_overseas") == "on"
@@ -280,6 +284,8 @@ def consent_view(request: HttpRequest) -> HttpResponse:
 
             consent = UserConsent.objects.create(
                 user=user,
+                full_name=full_name or user.realname or user.username,  # 최소한 뭔가는 남기도록
+                position=position or None,
                 email_at_consent=email or user.email or "",
                 policy_version=policy_version,
                 valid_until=valid_until,
@@ -306,6 +312,19 @@ def consent_view(request: HttpRequest) -> HttpResponse:
         latest_any = (
             UserConsent.objects.filter(user=user).order_by("-created_at").first()
         )
+
+    else:
+        # ★ GET + 이미 유효한 최신 동의가 있으면, 폼 대신 PDF용 화면을 바로 보여줌
+        if latest_valid:
+            return render(
+                request,
+                "users/consent_pdf.html",  # 이 템플릿/ CSS 는 다음 프롬프트에서 손보면 됨
+                {
+                    "user": user,
+                    "consent": latest_valid,
+                    "next_url": next_url,
+                },
+            )
 
     context = {
         "user": user,

@@ -85,18 +85,33 @@ class UserConsentAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "user",
+        "full_name",
+        "position",
         "email_at_consent",
         "policy_version",
         "created_at",
         "valid_until",
         "is_fully_accepted",
+        "ip_address",
     )
-    list_filter = ("policy_version", "is_fully_accepted", "created_at")
+    list_filter = (
+        "policy_version",
+        "is_fully_accepted",
+        "position",
+        "created_at",
+    )
     search_fields = (
         "user__username",
         "user__realname",
         "user__kakao_id",
+        "full_name",
         "email_at_consent",
+        "ip_address",
     )
     ordering = ("-created_at",)
-    readonly_fields = ("created_at",)
+    readonly_fields = (
+        "created_at",
+        "ip_address",
+        "user_agent",
+        "pdf_file",
+    )
